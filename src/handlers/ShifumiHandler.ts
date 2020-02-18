@@ -48,7 +48,7 @@ class ShifumiHandler extends Handler {
    * Choose a random value
    */
   private pickRandomChoice(): ShifumiEnum {
-    return ShifumiHandler.availableValues[Math.round(ShifumiHandler.availableValues.length * Math.random())]
+    return ShifumiHandler.availableValues[Math.trunc(ShifumiHandler.availableValues.length * Math.random())]
   }
 }
 
