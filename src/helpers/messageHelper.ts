@@ -47,5 +47,17 @@ export default {
     const parsedUrl: UrlWithStringQuery = parse(url)
 
     return parsedUrl.pathname && authorizedExtension.includes(extname(parsedUrl.pathname))
+  },
+  /**
+   * Check if the url is included in the whitelist
+   * @param msg The message to analyse
+   * @param whitelist The list of the valid hostname
+   */
+  isWhitelistedHostname(url: string, whitelist: string[]): boolean {
+    const parsedUrl: UrlWithStringQuery = parse(url)
+
+    return parsedUrl.hostname && whitelist.reduce((accumulator, hostname) => {
+      return accumulator || parsedUrl.hostname.endsWith(hostname)
+    }, false)
   }
 }
