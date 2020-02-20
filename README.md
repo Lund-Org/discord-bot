@@ -50,4 +50,3 @@ To make your bot join your server, go in the OAuth menu
 Check "Bot"
 Check "Manage Channels" and "Manage Messages"
 Copy the url provided and use it to add the bot to your server
->>>>>>> Stashed changes

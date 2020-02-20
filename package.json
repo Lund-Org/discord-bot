@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "npm run build && npm run start",
-    "build": "mkdir -p dist && rm -rf dist/* && tsc --project tsconfig.json",
+    "build": "rm -rf dist && mkdir dist && tsc --project tsconfig.json",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
