@@ -4,7 +4,7 @@ import parsingHelper from '../helpers/parsingHelper'
 
 class GoogleHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith('!google')
+    return super.validate(client, msg) && msg.content.startsWith('§google')
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

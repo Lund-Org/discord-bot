@@ -9,7 +9,7 @@ class ShifumiHandler extends Handler {
   ]
 
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith('!shifumi')
+    return super.validate(client, msg) && msg.content.startsWith('§shifumi')
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
@@ -18,7 +18,7 @@ class ShifumiHandler extends Handler {
     if (userChoice) {
       this.gameRules(msg, userChoice)
     } else {
-      msg.channel.send('Mauvais format. Le shifumi s\'écrit : !shifumi pierre|feuille|ciseaux')
+      msg.channel.send('Mauvais format. Le shifumi s\'écrit : §shifumi pierre|feuille|ciseaux')
     }
     return true
   }

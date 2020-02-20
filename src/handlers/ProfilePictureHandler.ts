@@ -4,7 +4,7 @@ import parsingHelper from '../helpers/parsingHelper'
 
 class ProfilePictureHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith('!pp')
+    return super.validate(client, msg) && msg.content.startsWith('§pp')
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

@@ -19,18 +19,21 @@ Chain the build and start command
 
 |Command|Description|
 |---|---|
-|!help|Display the bot features|
-|!google subject|Return a google search link for the subject specified|
-|!join|Display when you joined the server|
-|!poll [question] [answer 1] [answer 2]|Create a poll|
+|§help|Display the bot features|
+|§google subject|Return a google search link for the subject specified|
+|§join|Display when you joined the server|
+|§poll [question] [answer 1] [answer 2]|Create a poll|
 |ping|Answer pong|
-|!pp username|Get the profile picture URI|
-|!shifumi pierre&#124;feuille&#124;ciseaux|To play rock-paper-cissors with the bot|
+|pong|Answer ping|
+|§pp username|Get the profile picture URI|
+|§shifumi pierre&#124;feuille&#124;ciseaux|To play rock-paper-cissors with the bot|
 
 A meme channel is created depending on the env variable MEME_CHANNEL
 If you already have a channel which includes the name specified in the MEME_CHANNEL, it will use it (it avoids to create the same channel after each restart of the bot).
 
 The meme channel accepts urls finishing by .jpg, .jpeg, .gif, .png and .bmp, the message with an image (and no text) or the link from the whitelist which is tenor.com, giphy.com and imgur.com.
+
+For the ping/pong, you have 1% chance to miss the table and you have 0.1% win
 
 ## Initialization of the project
 
