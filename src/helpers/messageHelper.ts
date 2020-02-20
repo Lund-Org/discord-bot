@@ -34,7 +34,7 @@ export default {
   },
   /**
    * Check if the argument is has a valid extension
-   * @param msg The message to analyse
+   * @param url The url to analyse
    */
   isValidImageFormat(url: string): boolean {
     const authorizedExtension = [
@@ -47,5 +47,17 @@ export default {
     const parsedUrl: UrlWithStringQuery = parse(url)
 
     return parsedUrl.pathname && authorizedExtension.includes(extname(parsedUrl.pathname))
+  },
+  /**
+   * Check if the url is included in the whitelist
+   * @param url The url to analyse
+   * @param whitelist The list of the valid hostnames
+   */
+  isWhitelistedHostname(url: string, whitelist: string[]): boolean {
+    const parsedUrl: UrlWithStringQuery = parse(url)
+
+    return parsedUrl.hostname && whitelist.reduce((accumulator, hostname) => {
+      return accumulator || parsedUrl.hostname.endsWith(hostname)
+    }, false)
   }
 }
