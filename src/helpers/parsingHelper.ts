@@ -21,7 +21,7 @@ export default {
    * @param message The content of the message
    */
   parseGoogleMessage (message: string): string {
-    const match = message.match(/!google (.*)/)
+    const match = message.match(/§google (.*)/)
 
     if (match) {
       return encodeURI(match[1])
@@ -34,7 +34,7 @@ export default {
    * @param message The content of the message
    */
   parseProfilePictureMessage(message: Message): ProfilePictureInterface | null {
-    const match = message.content.match(/!pp (.*)/)
+    const match = message.content.match(/§pp (.*)/)
 
     if (match) {
       const member: GuildMember = message.guild.members.find((member: GuildMember): boolean => {
@@ -59,7 +59,7 @@ export default {
    * @param availableValues The valid values for the command
    */
   parseShifumiMessage(msg: string, availableValues: ShifumiEnum[]): ShifumiEnum | null {
-    const match = msg.match(/!shifumi (.*)/)
+    const match = msg.match(/§shifumi (.*)/)
 
     if (match && availableValues.reduce((accumulator, value) => accumulator || value === match[1], false)) {
       return availableValues.find(x => x === match[1])

@@ -3,7 +3,7 @@ import Handler from './Handler'
 
 class JoinAtHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith('!join')
+    return super.validate(client, msg) && msg.content.startsWith('§join')
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
