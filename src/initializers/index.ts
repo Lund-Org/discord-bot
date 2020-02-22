@@ -1,5 +1,7 @@
 import ChannelInitializer from './ChannelInitializer'
+import CommandPrefixInitializer from './CommandPrefixInitializer'
 
 export default [
-  ChannelInitializer
+  ChannelInitializer,
+  CommandPrefixInitializer
 ]
