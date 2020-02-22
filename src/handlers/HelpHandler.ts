@@ -8,16 +8,17 @@ class HelpHandler extends Handler {
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
+    const prefix = Singleton.getData('prefix')
     const snippet: RichEmbed = new RichEmbed({
       title: 'Liste des commandes disponibles :'
     })
-    snippet.addField(`${Singleton.getData('prefix')}google recherche`, 'Effectue une recherche basé sur ce qu\'il y a après la commande')
-    snippet.addField(`${Singleton.getData('prefix')}join`, 'Récupère la date d\'arrivée au serveur')
-    snippet.addField(`${Singleton.getData('prefix')}poll [question] [rep 1] [rep 2] ...`, 'Effectue un sondage basé sur les réactions (10 réponses max.)')
+    snippet.addField(`${prefix}google recherche`, 'Effectue une recherche basé sur ce qu\'il y a après la commande')
+    snippet.addField(`${prefix}join`, 'Récupère la date d\'arrivée au serveur')
+    snippet.addField(`${prefix}poll [question] [rep 1] [rep 2] ...`, 'Effectue un sondage basé sur les réactions (10 réponses max.)')
     snippet.addField('ping', 'pong 🏓')
     snippet.addField('pong', 'ping 🏓')
-    snippet.addField(`${Singleton.getData('prefix')}pp pseudo`, 'Récupère l\'image de profil de l\'utilisateur (ne pas @ la personne)')
-    snippet.addField(`${Singleton.getData('prefix')}shifumi pierre|feuille|ciseaux`, 'Joue à Shifumi avec le bot')
+    snippet.addField(`${prefix}pp pseudo`, 'Récupère l\'image de profil de l\'utilisateur (ne pas @ la personne)')
+    snippet.addField(`${prefix}shifumi pierre|feuille|ciseaux`, 'Joue à Shifumi avec le bot')
     msg.channel.send(snippet)
     return true
   }
