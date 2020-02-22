@@ -1,11 +1,11 @@
 import { Client, Message, User } from 'discord.js'
 import Handler from './Handler'
 import parsingHelper from '../helpers/parsingHelper'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class ProfilePictureHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}pp`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}pp`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

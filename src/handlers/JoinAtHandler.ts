@@ -1,10 +1,10 @@
 import { Client, Message } from 'discord.js'
 import Handler from './Handler'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class JoinAtHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}join`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}join`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

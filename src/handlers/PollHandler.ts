@@ -1,7 +1,7 @@
 import { Client, Message } from 'discord.js'
 import Handler from './Handler'
 import parsingHelper from '../helpers/parsingHelper'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class PollHandler extends Handler {
   static reactionEmojis: Array<string> = [
@@ -9,14 +9,14 @@ class PollHandler extends Handler {
   ]
 
   validate(client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}poll`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}poll`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
     const matches = parsingHelper.parsePollMessage(msg.content)
 
     if (!matches) {
-      msg.reply(`Mauvais format. Les sondages s\'écrivent : \`${Singleton.getData('prefix')}poll [QUESTION] [REP1] [REP2] [...]\`
+      msg.reply(`Mauvais format. Les sondages s\'écrivent : \`${DataStore.getData('prefix')}poll [QUESTION] [REP1] [REP2] [...]\`
       Les caractères autorisés sont : Les lettres, les chiffres, le point, le point d'interrogation, l'underscore, le tiret, les guillemets et l'apostrophe`)
     } else if (matches.length > 11) {
       msg.reply('👮‍♂️ Il ne peut y avoir plus de 10 réponses')

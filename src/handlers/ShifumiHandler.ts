@@ -2,7 +2,7 @@ import { Client, Message } from 'discord.js'
 import Handler from './Handler'
 import parsingHelper from '../helpers/parsingHelper'
 import ShifumiEnum from '../enums/ShifumiEnum'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class ShifumiHandler extends Handler {
   static availableValues: ShifumiEnum[] = [
@@ -10,7 +10,7 @@ class ShifumiHandler extends Handler {
   ]
 
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}shifumi`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}shifumi`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
@@ -19,7 +19,7 @@ class ShifumiHandler extends Handler {
     if (userChoice) {
       this.gameRules(msg, userChoice)
     } else {
-      msg.channel.send(`Mauvais format. Le shifumi s'écrit : ${Singleton.getData('prefix')}shifumi pierre|feuille|ciseaux`)
+      msg.channel.send(`Mauvais format. Le shifumi s'écrit : ${DataStore.getData('prefix')}shifumi pierre|feuille|ciseaux`)
     }
     return true
   }

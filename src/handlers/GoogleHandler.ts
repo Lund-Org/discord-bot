@@ -1,11 +1,11 @@
 import { Client, Message } from 'discord.js'
 import Handler from './Handler'
 import parsingHelper from '../helpers/parsingHelper'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class GoogleHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}google`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}google`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

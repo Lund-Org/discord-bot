@@ -1,14 +1,14 @@
 import { Client, Message, RichEmbed } from 'discord.js'
 import Handler from './Handler'
-import Singleton from '../helpers/singleton'
+import DataStore from '../helpers/dataStore'
 
 class HelpHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}help`)
+    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}help`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
-    const prefix = Singleton.getData('prefix')
+    const prefix = DataStore.getData('prefix')
     const snippet: RichEmbed = new RichEmbed({
       title: 'Liste des commandes disponibles :'
     })
