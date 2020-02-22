@@ -1,6 +1,7 @@
 import { User, Message, GuildMember, Collection } from "discord.js"
 import ProfilePictureInterface from '../interfaces/ProfilePictureInterface'
 import ShifumiEnum from '../enums/ShifumiEnum'
+import Singleton from '../helpers/singleton'
 
 export default {
   /**
@@ -21,7 +22,7 @@ export default {
    * @param message The content of the message
    */
   parseGoogleMessage (message: string): string {
-    const match = message.match(/§google (.*)/)
+    const match = message.match(new RegExp(`${Singleton.getData('prefix')}google (.*)`))
 
     if (match) {
       return encodeURI(match[1])
@@ -33,8 +34,8 @@ export default {
    * Parse the pp command
    * @param message The content of the message
    */
-  parseProfilePictureMessage(message: Message): ProfilePictureInterface | null {
-    const match = message.content.match(/§pp (.*)/)
+  parseProfilePictureMessage(message: Message): ProfilePictureInterface {
+    const match = message.content.match(new RegExp(`${Singleton.getData('prefix')}pp (.*)`))
 
     if (match) {
       const member: GuildMember = message.guild.members.find((member: GuildMember): boolean => {
@@ -51,7 +52,7 @@ export default {
         }
       }
     }
-    return null
+    return { user: null, nearestUsers: [] }
   },
   /**
    * Parse the pp command
@@ -59,7 +60,7 @@ export default {
    * @param availableValues The valid values for the command
    */
   parseShifumiMessage(msg: string, availableValues: ShifumiEnum[]): ShifumiEnum | null {
-    const match = msg.match(/§shifumi (.*)/)
+    const match = msg.match(new RegExp(`${Singleton.getData('prefix')}§shifumi (.*)`))
 
     if (match && availableValues.reduce((accumulator, value) => accumulator || value === match[1], false)) {
       return availableValues.find(x => x === match[1])

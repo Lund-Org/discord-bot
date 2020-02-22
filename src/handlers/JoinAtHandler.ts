@@ -1,9 +1,10 @@
 import { Client, Message } from 'discord.js'
 import Handler from './Handler'
+import Singleton from '../helpers/singleton'
 
 class JoinAtHandler extends Handler {
   validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith('§join')
+    return super.validate(client, msg) && msg.content.startsWith(`${Singleton.getData('prefix')}join`)
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
