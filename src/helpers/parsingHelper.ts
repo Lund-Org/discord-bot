@@ -9,7 +9,7 @@ export default {
    * @param message The content of the message
    */
   parsePollMessage (message: string): Array<string> | null {
-    const matches = message.match(/\[([A-Za-zÀ-ÿ0-9\s\?_\-'"\.]+)\]/g)
+    const matches = message.match(/\[([^\[\]]+)\]/g)
     
     if (!matches || matches.length < 3) {
       return null
