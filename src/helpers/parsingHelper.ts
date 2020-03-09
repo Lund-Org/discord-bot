@@ -60,7 +60,7 @@ export default {
    * @param availableValues The valid values for the command
    */
   parseShifumiMessage(msg: string, availableValues: ShifumiEnum[]): ShifumiEnum | null {
-    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}§shifumi (.*)`))
+    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}shifumi (.*)`))
 
     if (match && availableValues.reduce((accumulator, value) => accumulator || value === match[1], false)) {
       return availableValues.find(x => x === match[1])
