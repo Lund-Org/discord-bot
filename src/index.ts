@@ -4,6 +4,8 @@ import initializers from './initializers'
 import Handler from './handlers/Handler'
 require('dotenv').config()
 
+let lastTry = (new Date()).getTime()
+
 const client = new Client()
 const handlers = handlerClasses.map((HandlerClass): Handler => {
   return new HandlerClass()
@@ -26,6 +28,15 @@ client.on('message', async (msg: Message) => {
         console.log(e)
       }
     }
+  }
+})
+
+process.on('uncaughtException', () => {
+  const newTry = (new Date()).getTime()
+
+  if (newTry - lastTry > 1000 * 60 * 60) {
+    lastTry = newTry
+    client.login(process.env.BOT_TOKEN)
   }
 })
 

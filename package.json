@@ -12,12 +12,12 @@
   "author": "Lund",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^13.7.1",
-    "@typescript-eslint/eslint-plugin": "^2.19.2",
-    "@typescript-eslint/parser": "^2.19.2",
-    "discord.js": "^11.5.1",
+    "@types/node": "^13.13.12",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "discord.js": "^11.6.4",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.5"
   }
 }
