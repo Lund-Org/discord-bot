@@ -1,6 +1,6 @@
 import { Client, Guild, Collection, GuildChannel } from 'discord.js'
 
-export default function (client: Client) {
+export default async function (client: Client) {
   const servers: Collection<string, Guild> = client.guilds;
 
   servers.every((server: Guild): boolean => {
