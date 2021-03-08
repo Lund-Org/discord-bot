@@ -6,5 +6,5 @@ export default abstract class Handler {
   validate(client: Client, msg: Message): boolean {
     return messageHelper.ignoreSelfMessage(client, msg)
   }
-  abstract async process(client: Client, msg: Message): Promise<boolean>
+  abstract process(client: Client, msg: Message): Promise<boolean>
 }
