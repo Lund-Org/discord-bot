@@ -10,9 +10,12 @@ export class PlayerInventory {
   @Column()
   total: number;
 
+  @Column()
+  type: string;
+
   @ManyToOne(() => Player, player => player.inventories)
   player: Player;
 
   @ManyToOne(() => CardType, cardType => cardType.playerInventories)
-  cardType: Player;
+  cardType: CardType;
 }

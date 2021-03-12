@@ -16,6 +16,8 @@
         "ignoreParameters": true
       }
     ],
-    "@typescript-eslint/no-unused-vars": "warn"
+    "@typescript-eslint/no-unused-vars": "warn",
+    "camelcase": "off",
+    "@typescript-eslint/camelcase": "off"
   }
 }

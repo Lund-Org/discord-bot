@@ -8,8 +8,11 @@ class PollHandler extends Handler {
     '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'
   ]
 
-  validate(client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}poll`)
+  validate(client: Client, msg: Message): Promise<boolean> {
+    return Promise.resolve(
+      super.validate(client, msg) &&
+      msg.content.startsWith(`${DataStore.getData('prefix')}poll`)
+    )
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

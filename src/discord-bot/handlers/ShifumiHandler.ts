@@ -9,8 +9,11 @@ class ShifumiHandler extends Handler {
     ShifumiEnum.PIERRE, ShifumiEnum.FEUILLE, ShifumiEnum.CISEAUX
   ]
 
-  validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}shifumi`)
+  validate (client: Client, msg: Message): Promise<boolean> {
+    return Promise.resolve(
+      super.validate(client, msg) &&
+      msg.content.startsWith(`${DataStore.getData('prefix')}shifumi`)
+    )
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

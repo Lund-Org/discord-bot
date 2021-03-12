@@ -8,8 +8,8 @@ export default {
    * @param client The bot client
    * @param msg The message to react with
    */
-  ignoreSelfMessage (client: Client, msg: Message): boolean {
-    return (msg.author.id !== client.user.id)
+  ignoreSelfMessage (client: Client, msg: Message): Promise<boolean> {
+    return Promise.resolve(msg.author.id !== client.user.id)
   },
   /**
    * Check if a message is an url

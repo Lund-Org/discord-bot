@@ -1,15 +1,18 @@
-import { Client, Message, RichEmbed } from 'discord.js'
+import { Client, Message, MessageEmbed } from 'discord.js'
 import Handler from './Handler'
 import DataStore from '../helpers/dataStore'
 
 class HelpHandler extends Handler {
-  validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}help`)
+  validate (client: Client, msg: Message): Promise<boolean> {
+    return Promise.resolve(
+      super.validate(client, msg) &&
+      msg.content.startsWith(`${DataStore.getData('prefix')}help`)
+    )
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
     const prefix = DataStore.getData('prefix')
-    const snippet: RichEmbed = new RichEmbed({
+    const snippet: MessageEmbed = new MessageEmbed({
       title: 'Liste des commandes disponibles :'
     })
     snippet.addField(`${prefix}google recherche`, 'Effectue une recherche basé sur ce qu\'il y a après la commande')

@@ -1,5 +1,4 @@
-import { User, Message, GuildMember, Collection } from "discord.js"
-import ProfilePictureInterface from '../interfaces/ProfilePictureInterface'
+import { User, Message } from "discord.js"
 import ShifumiEnum from '../enums/ShifumiEnum'
 import DataStore from '../helpers/dataStore'
 
@@ -34,25 +33,20 @@ export default {
    * Parse the pp command
    * @param message The content of the message
    */
-  parseProfilePictureMessage(message: Message): ProfilePictureInterface {
+  async parseProfilePictureMessage(message: Message): Promise<User|null> {
     const match = message.content.match(new RegExp(`${DataStore.getData('prefix')}pp (.*)`))
 
     if (match) {
-      const member: GuildMember = message.guild.members.find((member: GuildMember): boolean => {
-        return member.user.username.toLowerCase() === match[1].toLowerCase()
-      })
-      const nearestNameMembers: Collection<string, GuildMember> = message.guild.members.filter((member: GuildMember): boolean => {
-        return member.user.username.toLowerCase().includes(match[1].toLowerCase())
-      })
+      const member = (await message.guild.members.fetch({
+        query: match[1].toLowerCase(),
+        limit: 1
+      })).first()
 
-      if (member || nearestNameMembers) {
-        return {
-          user: member ? member.user : null,
-          nearestUsers: nearestNameMembers.map((x: GuildMember): User => x.user)
-        }
+      if (member) {
+        return member.user
       }
     }
-    return { user: null, nearestUsers: [] }
+    return null
   },
   /**
    * Parse the pp command
@@ -64,6 +58,18 @@ export default {
 
     if (match && availableValues.reduce((accumulator, value) => accumulator || value === match[1], false)) {
       return availableValues.find(x => x === match[1])
+    }
+    return null
+  },
+  /**
+   * Parse the gatcha command
+   * @param msg The content of the message
+   */
+  parseGatchaCmd(msg: string): string | null {
+    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}gatcha (.*)`))
+
+    if (match) {
+      return match[1].trim();
     }
     return null
   }

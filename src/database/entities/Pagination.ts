@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, } from "typeorm";
 
 @Entity()
 export class Pagination {
@@ -10,4 +10,7 @@ export class Pagination {
 
   @Column({ unique: true, nullable: false })
   discordMessage_id: string;
+
+  @Column({ nullable: false })
+  discordUser_id: string;
 }

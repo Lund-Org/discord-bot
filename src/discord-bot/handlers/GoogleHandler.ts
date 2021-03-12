@@ -4,8 +4,11 @@ import parsingHelper from '../helpers/parsingHelper'
 import DataStore from '../helpers/dataStore'
 
 class GoogleHandler extends Handler {
-  validate (client: Client, msg: Message): boolean {
-    return super.validate(client, msg) && msg.content.startsWith(`${DataStore.getData('prefix')}google`)
+  validate (client: Client, msg: Message): Promise<boolean> {
+    return Promise.resolve(
+      super.validate(client, msg) &&
+      msg.content.startsWith(`${DataStore.getData('prefix')}google`)
+    )
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {
