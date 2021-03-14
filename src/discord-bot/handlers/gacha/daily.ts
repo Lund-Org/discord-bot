@@ -7,7 +7,7 @@ function hasAlreadyDrawAvailable(player: Player): boolean {
   const beginningOfTheDay = new Date();
   beginningOfTheDay.setHours(0, 0, 0, 0);
   
-  return player.lastDailyDraw.getTime() <= beginningOfTheDay.getTime()
+  return player.lastDailyDraw ? player.lastDailyDraw.getTime() <= beginningOfTheDay.getTime() : true
 }
 
 async function setDailyDraw (date: Date, playerId: number): Promise<void> {
