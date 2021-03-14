@@ -1,5 +1,5 @@
 import { Message, MessageAttachment } from "discord.js"
-import { getConnection, getManager, getRepository } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 import { Player } from "../../../database/entities/Player";
 import { addCardsToInventory, drawCards, generateDrawImage } from "./helper";
 
@@ -22,6 +22,7 @@ export const join = async ({ msg }: { msg: Message }) => {
     player.lastMessageDate = new Date()
     player.lastDailyDraw = null
     player.joinDate = new Date()
+    player.inventories = []
     await entityManager.save(player)
 
     const cards = await drawCards(8)
@@ -31,6 +32,7 @@ export const join = async ({ msg }: { msg: Message }) => {
     await addCardsToInventory(player, cards, 0)
     msg.channel.send(`Bienvenue dans le gatcha, voici tes 8 premières cartes !`, attachment);
   } catch (e) {
+    console.log(e)
     msg.channel.send("Une erreur est survenue lors de la création du compte")
   }
 }
