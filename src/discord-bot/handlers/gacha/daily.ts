@@ -11,15 +11,12 @@ function hasAlreadyDrawAvailable(player: Player): boolean {
 }
 
 async function setDailyDraw (date: Date, playerId: number): Promise<void> {
-  const a = await getConnection()
+  await getConnection()
     .createQueryBuilder()
     .update(Player)
     .set({ lastDailyDraw: date })
     .where('id = :id', { id: playerId })
     .execute();
-
-  console.log(a)
-
 }
 
 export const daily = async ({ msg }: { msg: Message }) => {
