@@ -1,5 +1,5 @@
 import { Message } from "discord.js"
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 
 export const points = async ({ msg }: { msg: Message }) => {
   const player = await userNotFound({ msg })

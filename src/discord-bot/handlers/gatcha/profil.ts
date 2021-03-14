@@ -1,7 +1,5 @@
 import { Message } from "discord.js"
-// import { getConnection, getRepository } from "typeorm";
-// import { Player } from "../../../database/entities/Player";
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 
 export const profil = async ({ msg }: { msg: Message }) => {
   const player = await userNotFound({ msg })

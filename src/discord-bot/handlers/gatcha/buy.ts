@@ -1,8 +1,8 @@
-import { Message } from "discord.js"
+import { Message, MessageAttachment } from "discord.js"
 import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import { Player } from '../../../database/entities/Player'
-import { userNotFound } from './errors'
+import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
 import GatchaEnum from "../../enums/GatchaEnum"
 
 type PriceConfig = { price: number };
@@ -11,7 +11,7 @@ async function securityChecks({ msg, player, cmd }: {
   msg: Message;
   player: Player;
   cmd: string[];
-}): Promise<number|false> {
+}): Promise<{ cardToBuy: number;totalPrice: number }|null> {
   const configPriceJSON = await getRepository(Config).findOne({
     where: { name: GatchaEnum.PRICE }
   })
@@ -19,11 +19,11 @@ async function securityChecks({ msg, player, cmd }: {
   const [commandBuy, ...args] = cmd
 
   if (args.length === 1 && args[0].match(/\d/)) {
-    const cardToBuy = parseInt(args[0]);
+    const cardToBuy = parseInt(args[0], 10);
 
     if (cardToBuy < 1 || cardToBuy > 6) {
       msg.channel.send('Erreur, le nombre de cartes achetable doit être entre 1 et 6')
-      return false
+      return null
     }
 
     if (player.points < cardToBuy * priceConfig.price) {
@@ -32,18 +32,25 @@ async function securityChecks({ msg, player, cmd }: {
           player.points
         }, points nécessaires : ${cardToBuy * priceConfig.price})`
       )
-      return false
+      return null
     }
 
-    return cardToBuy
+    return {
+      cardToBuy,
+      totalPrice: cardToBuy * priceConfig.price
+    }
   }
 
   msg.channel.send('Erreur, le format est : "!!gatcha buy nombre_entre_1_et_6"')
-  return false
+  return null
 }
 
 export const buy = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
-  const player = await userNotFound({ msg })
+  const player = await userNotFound({
+    msg, relations: [
+      'inventories',
+      'inventories.cardType',
+    ] })
 
   if (!player) {
     return
@@ -51,9 +58,14 @@ export const buy = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
 
   const cardToDraw = await securityChecks({ msg, player, cmd })
 
-  if (cardToDraw === false) {
+  if (cardToDraw === null) {
     return
   }
 
-  // draw X cards
+  const cards = await drawCards(cardToDraw.cardToBuy)
+  const canvas = await generateDrawImage(msg.author.username, cards)
+  const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png');
+
+  await addCardsToInventory(player, cards, cardToDraw.totalPrice)
+  msg.channel.send(`Les ${cardToDraw.cardToBuy} cartes que tu as acheté`, attachment);
 }

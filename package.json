@@ -15,10 +15,12 @@
   "author": "Lund",
   "license": "ISC",
   "dependencies": {
+    "@types/canvasjs": "^1.9.6",
     "@types/express": "^4.17.11",
     "@types/node": "^13.13.45",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
+    "canvas": "^2.7.0",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.6",

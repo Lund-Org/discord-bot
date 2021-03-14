@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, MessageReaction, User } from "discord.js"
 import { Pagination } from "../../../database/entities/Pagination";
 import { getConnection, getRepository } from "typeorm";
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 import { PlayerInventory } from "../../../database/entities/PlayerInventory";
 import { Player } from "../../../database/entities/Player";
 

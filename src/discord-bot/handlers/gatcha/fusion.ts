@@ -2,7 +2,7 @@ import { Message } from "discord.js"
 import { CardType } from "../../../database/entities/CardType"
 import { Player } from "../../../database/entities/Player"
 import { getManager, getRepository } from "typeorm"
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
 
 async function createFusionCard(player: Player, cardsRequired: PlayerInventory[], fusionCard: CardType) {
@@ -39,7 +39,7 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
   }
 
   if (args.length === 1 && args[0].match(/\d/)) {
-    const cardToCreateId = parseInt(args[0]);
+    const cardToCreateId = parseInt(args[0], 10);
     const cardToCreate = await getRepository(CardType).findOne({
       where: { id: cardToCreateId },
       relations: ['fusionDependencies']

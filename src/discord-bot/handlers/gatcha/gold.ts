@@ -3,7 +3,7 @@ import { getManager } from "typeorm"
 import { Player } from "../../../database/entities/Player"
 import { CardType } from "../../../database/entities/CardType"
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 
 async function createOrUpdateGold(player: Player, cardToGold: CardType, inventoryCardGold: PlayerInventory) {
   const entityManager = getManager()
@@ -38,7 +38,7 @@ export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
   }
 
   if (args.length === 1 && args[0].match(/\d/)) {
-    const cardToGold = parseInt(args[0]);
+    const cardToGold = parseInt(args[0], 10);
     const inventoryCardBasic = player.inventories.find((inventory) => {
       return inventory.cardType.id === cardToGold && inventory.type === 'basic'
     })

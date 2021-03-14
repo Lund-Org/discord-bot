@@ -1,7 +1,7 @@
-import { Message } from "discord.js"
+import { Message, MessageAttachment } from "discord.js"
 import { createQueryBuilder, getConnection } from "typeorm";
 import { Player } from "../../../database/entities/Player";
-import { userNotFound } from './errors'
+import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
 
 async function hasDailyDraw(): Promise<boolean> {
   const beginningOfTheDay = new Date();
@@ -13,7 +13,7 @@ async function hasDailyDraw(): Promise<boolean> {
     .orWhere('player.lastDailyDraw <= :beginningOfTheDay', { beginningOfTheDay})
     .getRawOne()
 
-  return !!parseInt(player.count);
+  return !!parseInt(player.count, 10);
 }
 
 async function setDailyDraw (date: Date, playerId: number): Promise<void> {
@@ -26,7 +26,11 @@ async function setDailyDraw (date: Date, playerId: number): Promise<void> {
 }
 
 export const daily = async ({ msg }: { msg: Message }) => {
-  const player = await userNotFound({ msg })
+  const player = await userNotFound({
+    msg, relations: [
+      'inventories',
+      'inventories.cardType',
+    ] })
   const dailyDrawDate = new Date();
 
   if (!player) {
@@ -36,8 +40,13 @@ export const daily = async ({ msg }: { msg: Message }) => {
   const hasAlreadyDraw = await hasDailyDraw();
 
   if (hasAlreadyDraw) {
-    // tirage
-    await setDailyDraw(dailyDrawDate, player.id);
+    const cards = await drawCards(1)
+    const canvas = await generateDrawImage(msg.author.username, cards)
+    const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
+
+    await addCardsToInventory(player, cards, 0)
+    await setDailyDraw(dailyDrawDate, player.id)
+    msg.channel.send(`Voici ton tirage quotidien GRA-TUIT`, attachment);
   } else {
     msg.channel.send('Tu as déjà fait ton tirage quotidien')
   }

@@ -1,5 +1,5 @@
 import { Client, Message } from 'discord.js'
-import { userNotFound } from './errors'
+import { userNotFound } from './helper'
 import { join } from './join'
 import { daily } from './daily'
 import { points } from './points'
