@@ -1,7 +1,7 @@
-enum GatchaEnum {
+enum GachaEnum {
   DROP_CHANCES = 'DROP_CHANCES',
   LEVELS = 'LEVELS',
   PRICE = 'PRICE'
 }
 
-export default GatchaEnum
+export default GachaEnum

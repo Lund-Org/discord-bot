@@ -5,7 +5,7 @@ import Handler from './handlers/Handler'
 import { getRepository } from 'typeorm'
 import { Pagination } from '../database/entities/Pagination'
 import { Player } from '../database/entities/Player'
-import { manageGatchaPagination } from './helpers/discordEvent'
+import { manageGachaPagination } from './helpers/discordEvent'
 
 export const initDiscord = () => {
   return new Promise((resolve, reject) => {
@@ -55,7 +55,7 @@ export const initDiscord = () => {
       })
 
       if (matchingPagination) {
-        await manageGatchaPagination(matchingPagination, reaction, user as User)
+        await manageGachaPagination(matchingPagination, reaction, user as User)
       }
     });
 

@@ -29,10 +29,10 @@ function splitArgs(cmd: string) {
   return cmd.split(' ').map((x: string) => x.trim())
 }
 
-export const gatcha = (client: Client, msg: Message, gatchaCmd: string|null): void => {
-  let cmd = gatchaCmd ? splitArgs(gatchaCmd) : null;
+export const gacha = (client: Client, msg: Message, gachaCmd: string|null): void => {
+  let cmd = gachaCmd ? splitArgs(gachaCmd) : null;
 
-  if (!gatchaCmd || !commands[cmd[0]]) {
+  if (!gachaCmd || !commands[cmd[0]]) {
     msg.channel.send("La commande n'existe pas. Voici les commandes possibles :")
     cmd = ['help']
   }

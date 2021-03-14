@@ -62,11 +62,11 @@ export default {
     return null
   },
   /**
-   * Parse the gatcha command
+   * Parse the gacha command
    * @param msg The content of the message
    */
-  parseGatchaCmd(msg: string): string | null {
-    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}gatcha (.*)`))
+  parseGachaCmd(msg: string): string | null {
+    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}gacha (.*)`))
 
     if (match) {
       return match[1].trim();

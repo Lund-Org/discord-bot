@@ -1,5 +1,5 @@
 import { Message } from "discord.js";
-import GatchaEnum from "../../../discord-bot/enums/GatchaEnum";
+import GachaEnum from "../../enums/GachaEnum";
 import { getManager, getRepository } from "typeorm"
 import { Player } from "../../../database/entities/Player";
 import { PlayerInventory } from "../../../database/entities/PlayerInventory";
@@ -42,7 +42,7 @@ export const userNotFound = async ({
   }
 
   if (withWarning) {
-    msg.channel.send(`Avant de pouvoir jouer, crée un compte avec la commande "${process.env.COMMAND_PREFIX}gatcha join"`)
+    msg.channel.send(`Avant de pouvoir jouer, crée un compte avec la commande "${process.env.COMMAND_PREFIX}gacha join"`)
   }
   return null
 }
@@ -82,7 +82,7 @@ export async function addCardsToInventory(player: Player, cardsToAdd: CardDraw[]
 
 export const drawCards = async (nbCardToDraw: number): Promise<CardDraw[]> => {
   const chancesJSON = await getRepository(Config).findOne({
-    where: { name: GatchaEnum.DROP_CHANCES }
+    where: { name: GachaEnum.DROP_CHANCES }
   })
   const chancesConfig: ChancesConfig = chancesJSON.value as ChancesConfig
   const cardsDraw: CardDraw[] = []

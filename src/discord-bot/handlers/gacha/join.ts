@@ -30,7 +30,7 @@ export const join = async ({ msg }: { msg: Message }) => {
     const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png');
 
     await addCardsToInventory(player, cards, 0)
-    msg.channel.send(`Bienvenue dans le gatcha, voici tes 8 premières cartes !`, attachment);
+    msg.channel.send(`Bienvenue dans le gacha, voici tes 8 premières cartes !`, attachment);
   } catch (e) {
     console.log(e)
     msg.channel.send("Une erreur est survenue lors de la création du compte")

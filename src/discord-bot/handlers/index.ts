@@ -6,11 +6,11 @@ import GoogleHandler from './GoogleHandler'
 import ProfilePictureHandler from './ProfilePictureHandler'
 import JoinAtHandler from './JoinAtHandler'
 import ShifumiHandler from './ShifumiHandler'
-import GatchaHandler from './GatchaHandler'
+import GachaHandler from './GachaHandler'
 
 export default [
-  // Gatcha needs to be first to give points
-  GatchaHandler,
+  // Gacha needs to be first to give points
+  GachaHandler,
   HelpHandler,
   MemeHandler,
   PollHandler,

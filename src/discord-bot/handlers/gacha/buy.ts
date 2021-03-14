@@ -3,7 +3,7 @@ import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import { Player } from '../../../database/entities/Player'
 import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
-import GatchaEnum from "../../enums/GatchaEnum"
+import GachaEnum from "../../enums/GachaEnum"
 
 type PriceConfig = { price: number };
 
@@ -13,7 +13,7 @@ async function securityChecks({ msg, player, cmd }: {
   cmd: string[];
 }): Promise<{ cardToBuy: number;totalPrice: number }|null> {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GatchaEnum.PRICE }
+    where: { name: GachaEnum.PRICE }
   })
   const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
   const [commandBuy, ...args] = cmd
@@ -41,7 +41,7 @@ async function securityChecks({ msg, player, cmd }: {
     }
   }
 
-  msg.channel.send('Erreur, le format est : "!!gatcha buy nombre_entre_1_et_6"')
+  msg.channel.send('Erreur, le format est : "!!gacha buy nombre_entre_1_et_6"')
   return null
 }
 

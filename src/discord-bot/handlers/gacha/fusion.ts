@@ -76,6 +76,6 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
       }`)
     }
   } else {
-    msg.channel.send('Erreur, le format est : "!!gatcha fusion identifiant_carte_voulue"')
+    msg.channel.send('Erreur, le format est : "!!gacha fusion identifiant_carte_voulue"')
   }
 }

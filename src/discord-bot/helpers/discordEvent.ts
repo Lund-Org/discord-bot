@@ -2,9 +2,9 @@ import { MessageReaction, User } from "discord.js"
 import { Player } from "../../database/entities/Player"
 import { Pagination } from "../../database/entities/Pagination"
 import { getRepository } from "typeorm"
-import { updateMessage } from "../handlers/gatcha/cards"
+import { updateMessage } from "../handlers/gacha/cards"
 
-export const manageGatchaPagination = async (
+export const manageGachaPagination = async (
   pagination: Pagination,
   reaction: MessageReaction,
   user: User

@@ -2,7 +2,7 @@ import { Message } from "discord.js"
 import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import { userNotFound } from './helper'
-import GatchaEnum from "../../enums/GatchaEnum"
+import GachaEnum from "../../enums/GachaEnum"
 
 type LevelConfig = Record<string, number>
 const basicXP = 100
@@ -20,7 +20,7 @@ export const profil = async ({ msg }: { msg: Message }) => {
   }
 
   const configLevelsJSON = await getRepository(Config).findOne({
-    where: { name: GatchaEnum.LEVELS }
+    where: { name: GachaEnum.LEVELS }
   })
   const levelConfig: LevelConfig = configLevelsJSON.value as LevelConfig
   const xp = player.inventories.reduce((acc, inventoryItem) => {
