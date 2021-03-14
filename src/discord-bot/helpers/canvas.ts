@@ -24,7 +24,7 @@ function setIdOfCard(
   cardDraw: CardDraw,
   ctx: CanvasRenderingContext2D
 ) {
-  ctx.font = '35px sans-serif'
+  ctx.font = '35px'
   ctx.textAlign = 'right';
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
@@ -71,9 +71,9 @@ function setTitleOfCard(
   ctx.textAlign = 'left';
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
-  ctx.font = `${fontSize}px sans-serif`
+  ctx.font = `${fontSize}px`
   while (fontSize > 10 && ctx.measureText(title).width > WIDTH_CARD - 2 * INNER_HORIZONTAL_MARGIN) {
-    ctx.font = `${fontSize}px sans-serif`
+    ctx.font = `${fontSize}px`
     --fontSize
   }
   ctx.fillText(title, offsetX + INNER_HORIZONTAL_MARGIN, offsetY + CARD_HEADER + CARD_IMAGE_HEIGHT)
@@ -87,7 +87,7 @@ function setDescriptionOfCard(
 ) {
   const fragmentedDescription = cardDraw.cardType.description.split(' ')
   let linesInput = 1
-  ctx.font = `35px sans-serif`
+  ctx.font = `35px`
   ctx.textAlign = 'left';
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
@@ -138,7 +138,7 @@ async function setStarsOfCard(
 }
 
 export const setupCardDrawHeader = async (username: string, ctx: CanvasRenderingContext2D) => {
-  ctx.font = '50px sans-serif'
+  ctx.font = '50px'
   ctx.fillStyle = '#ffffff'
   ctx.textBaseline = "ideographic"
   ctx.fillText(username, MARGIN_LEFT_HEADER, 10)
