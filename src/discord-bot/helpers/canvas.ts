@@ -45,7 +45,7 @@ async function setImageOfCard(
       img,
       offsetX + INNER_HORIZONTAL_MARGIN,
       offsetY + CARD_HEADER,
-      WIDTH_CARD - 2 * INNER_HORIZONTAL_MARGIN,
+      WIDTH_CARD - INNER_HORIZONTAL_MARGIN,
       CARD_IMAGE_HEIGHT
     );
   } catch (e) {
@@ -53,7 +53,7 @@ async function setImageOfCard(
     ctx.fillRect(
       offsetX + INNER_HORIZONTAL_MARGIN,
       offsetY + CARD_HEADER,
-      WIDTH_CARD - 2 * INNER_HORIZONTAL_MARGIN,
+      WIDTH_CARD - INNER_HORIZONTAL_MARGIN,
       CARD_IMAGE_HEIGHT
     )
   }
@@ -66,13 +66,16 @@ function setTitleOfCard(
   ctx: CanvasRenderingContext2D
 ) {
   const title = cardDraw.cardType.name
-  let fontSize = 40
+  let fontSize = 41
 
-  for (; fontSize > 10 && ctx.measureText(title).width > WIDTH_CARD - 2 * INNER_HORIZONTAL_MARGIN; --fontSize);
-  ctx.font = `${fontSize}px sans-serif`
   ctx.textAlign = 'left';
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
+  ctx.font = `${fontSize}px sans-serif`
+  while (fontSize > 10 && ctx.measureText(title).width > WIDTH_CARD - 2 * INNER_HORIZONTAL_MARGIN) {
+    ctx.font = `${fontSize}px sans-serif`
+    --fontSize
+  }
   ctx.fillText(title, offsetX + INNER_HORIZONTAL_MARGIN, offsetY + CARD_HEADER + CARD_IMAGE_HEIGHT)
 }
 

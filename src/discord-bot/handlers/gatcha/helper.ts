@@ -54,17 +54,21 @@ export async function addCardsToInventory(player: Player, cardsToAdd: CardDraw[]
   cardsToAdd.forEach((cardToAdd) => {
     const type = cardToAdd.isGold ? 'gold' : 'basic'
     let inventory = player.inventories.find((x) => x.cardType.id === cardToAdd.cardType.id && x.type === type)
+    const newInventoryItem = inventoriesItem.find((x) => x.cardType.id === cardToAdd.cardType.id && x.type === type)
 
-    if (inventory) {
+    if (newInventoryItem) {
+      newInventoryItem.total += 1
+    } else if (inventory) {
       inventory.total += 1
+      inventoriesItem.push(inventory)
     } else {
       inventory = new PlayerInventory()
       inventory.player = player
       inventory.total = 1
       inventory.type = type
       inventory.cardType = cardToAdd.cardType
+      inventoriesItem.push(inventory)
     }
-    inventoriesItem.push(inventory)
   })
   if (totalPrice > 0) {
     player.points -= totalPrice
@@ -99,7 +103,7 @@ export const drawCards = async (nbCardToDraw: number): Promise<CardDraw[]> => {
     })
 
     const level = parseInt(loopValues.foundLevel, 10)
-    const isGold = (Math.floor(Math.random() * 100) <= 4)
+    const isGold = (Math.floor(Math.random() * 100) < 4)
     const randomCard = await getManager()
       .createQueryBuilder(CardType, "cardType")
       .where('cardType.level = :level', { level })

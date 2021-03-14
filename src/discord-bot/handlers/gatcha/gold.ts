@@ -37,7 +37,7 @@ export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     return
   }
 
-  if (args.length === 1 && args[0].match(/\d/)) {
+  if (args.length === 1 && args[0].match(/^\d+$/)) {
     const cardToGold = parseInt(args[0], 10);
     const inventoryCardBasic = player.inventories.find((inventory) => {
       return inventory.cardType.id === cardToGold && inventory.type === 'basic'
@@ -55,5 +55,7 @@ export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     } else {
       msg.channel.send('La carte n\'existe pas')
     }
+  } else {
+    msg.channel.send('Identifiant de carte incorrect')
   }
 }

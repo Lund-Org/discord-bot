@@ -38,7 +38,7 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
     return
   }
 
-  if (args.length === 1 && args[0].match(/\d/)) {
+  if (args.length === 1 && args[0].match(/^\d+$/)) {
     const cardToCreateId = parseInt(args[0], 10);
     const cardToCreate = await getRepository(CardType).findOne({
       where: { id: cardToCreateId },
@@ -58,15 +58,22 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
     const cardInventoriesRequired = player.inventories.filter((inventory) => {
       return dependencyIds.includes(inventory.cardType.id) && inventory.type === 'basic'
     })
-    const allRecipients = cardInventoriesRequired.reduce((acc: number, val: PlayerInventory): number => {
-      return acc + (val.total > 0 ? 1 : 0)
-    }, 0)
+    const missingCards = dependencyIds.reduce((acc: number[], val: number): number[] => {
+      const hasInventoryCard = player.inventories.find((x) => val == x.cardType.id && x.type === 'basic' && x.total > 0)
+      
+      return [
+        ...acc,
+        ...(hasInventoryCard ? [] : [val])
+      ]
+    }, [])
 
-    if (allRecipients === cardToCreate.fusionDependencies.length) {
+    if (missingCards.length === 0) {
       await createFusionCard(player, cardInventoriesRequired, cardToCreate)
       msg.channel.send('Carte fusion créée !')
     } else {
-      msg.channel.send('Tu ne possèdes tous les réactifs nécessaires')
+      msg.channel.send(`Tu ne possèdes pas tous les réactifs nécessaires. Cartes manquantes : ${
+        missingCards.map((id) => `#${id}`).join(', ')
+      }`)
     }
   } else {
     msg.channel.send('Erreur, le format est : "!!gatcha fusion identifiant_carte_voulue"')

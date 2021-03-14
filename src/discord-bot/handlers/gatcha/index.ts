@@ -9,6 +9,7 @@ import { gold } from './gold'
 import { fusion } from './fusion'
 import { profil } from './profil'
 import { help } from './help'
+import { view } from './view'
 import { getManager } from 'typeorm'
 
 const commands: Record<string, Function> = {
@@ -21,6 +22,7 @@ const commands: Record<string, Function> = {
   fusion: fusion,
   profil: profil,
   help: help,
+  view: view,
 }
 
 function splitArgs(cmd: string) {

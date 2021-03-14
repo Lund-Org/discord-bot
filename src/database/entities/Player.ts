@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad } from "typeorm";
 import { PlayerInventory } from "./PlayerInventory";
 
 @Entity()
@@ -23,4 +23,11 @@ export class Player {
 
   @OneToMany(() => PlayerInventory, inventory => inventory.player)
   inventories: PlayerInventory[];
+
+  @AfterLoad()
+  sortAttributes() {
+    if (this?.inventories?.length) {
+      this.inventories.sort((a, b) => (a.cardType?.id < b.cardType?.id ? -1 : a.cardType?.id === b.cardType?.id ? 0 : 1));
+    }
+  }
 }

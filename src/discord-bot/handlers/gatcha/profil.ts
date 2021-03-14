@@ -37,7 +37,7 @@ export const profil = async ({ msg }: { msg: Message }) => {
     return acc + xpPerCard * inventoryItem.cardType.level
   }, 0)
   const level = Object.values(levelConfig).reduce((acc, val: number, index: number) => {
-    if (val < xp) {
+    if (val <= xp) {
       return {
         currentLevel: index + 1,
         xpNextLevel: Object.values(levelConfig).length === index + 1 ? 0 : Object.values(levelConfig)[index + 1]

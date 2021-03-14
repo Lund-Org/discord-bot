@@ -1,28 +1,25 @@
 import { Message, MessageAttachment } from "discord.js"
-import { createQueryBuilder, getConnection } from "typeorm";
+import { getConnection } from "typeorm";
 import { Player } from "../../../database/entities/Player";
 import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
 
-async function hasDailyDraw(): Promise<boolean> {
+function hasAlreadyDrawAvailable(player: Player): boolean {
   const beginningOfTheDay = new Date();
   beginningOfTheDay.setHours(0, 0, 0, 0);
-  const player = await createQueryBuilder()
-    .select('COUNT(player.id) as count, player.id as id')
-    .from(Player, 'player')
-    .where('player.lastDailyDraw IS NULL')
-    .orWhere('player.lastDailyDraw <= :beginningOfTheDay', { beginningOfTheDay})
-    .getRawOne()
-
-  return !!parseInt(player.count, 10);
+  
+  return player.lastDailyDraw.getTime() <= beginningOfTheDay.getTime()
 }
 
 async function setDailyDraw (date: Date, playerId: number): Promise<void> {
-  await getConnection()
+  const a = await getConnection()
     .createQueryBuilder()
     .update(Player)
     .set({ lastDailyDraw: date })
     .where('id = :id', { id: playerId })
     .execute();
+
+  console.log(a)
+
 }
 
 export const daily = async ({ msg }: { msg: Message }) => {
@@ -37,7 +34,7 @@ export const daily = async ({ msg }: { msg: Message }) => {
     return
   }
 
-  const hasAlreadyDraw = await hasDailyDraw();
+  const hasAlreadyDraw = hasAlreadyDrawAvailable(player);
 
   if (hasAlreadyDraw) {
     const cards = await drawCards(1)

@@ -18,7 +18,7 @@ async function securityChecks({ msg, player, cmd }: {
   const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
   const [commandBuy, ...args] = cmd
 
-  if (args.length === 1 && args[0].match(/\d/)) {
+  if (args.length === 1 && args[0].match(/^\d$/)) {
     const cardToBuy = parseInt(args[0], 10);
 
     if (cardToBuy < 1 || cardToBuy > 6) {
