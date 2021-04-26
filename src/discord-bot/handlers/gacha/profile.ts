@@ -8,7 +8,7 @@ type LevelConfig = Record<string, number>
 const basicXP = 100
 const goldXP = 500
 
-export const profil = async ({ msg }: { msg: Message }) => {
+export const profile = async ({ msg }: { msg: Message }) => {
   const player = await userNotFound({
     msg, relations: [
       'inventories',

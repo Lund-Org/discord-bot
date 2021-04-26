@@ -1,27 +1,29 @@
 import { Client, Message } from 'discord.js'
 import { userNotFound } from './helper'
-import { join } from './join'
-import { daily } from './daily'
-import { points } from './points'
 import { buy } from './buy'
 import { cards } from './cards'
-import { gold } from './gold'
+import { daily } from './daily'
 import { fusion } from './fusion'
-import { profil } from './profil'
+import { gold } from './gold'
 import { help } from './help'
+import { join } from './join'
+import { points } from './points'
+import { profile } from './profile'
+import { twitch } from './twitch'
 import { view } from './view'
 import { getManager } from 'typeorm'
 
 const commands: Record<string, Function> = {
-  join: join,
-  daily: daily,
-  points: points,
   buy: buy,
   cards: cards,
-  gold: gold,
+  daily: daily,
   fusion: fusion,
-  profil: profil,
+  gold: gold,
   help: help,
+  join: join,
+  points: points,
+  profile: profile,
+  twitch: twitch,
   view: view,
 }
 

@@ -32,6 +32,8 @@
     "reflect-metadata": "^0.1.13",
     "supervisor": "^0.12.0",
     "ts-node": "^9.1.1",
+    "twitch": "^4.5.2",
+    "twitch-pubsub-client": "^4.5.2",
     "typeorm": "^0.2.31",
     "typescript": "^4.2.3"
   },

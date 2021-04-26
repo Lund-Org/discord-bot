@@ -15,7 +15,7 @@ class ProfilePictureHandler extends Handler {
     const user = await parsingHelper.parseProfilePictureMessage(msg)
 
     if (user && user.avatarURL) {
-      msg.channel.send(user.displayAvatarURL({ size: 256 }))
+      msg.channel.send(user.displayAvatarURL({ size: 256, dynamic: true }))
     } else if (user) {
       msg.channel.send('Cet utilisateur n\'a pas d\'avatar ☹')
     } else {

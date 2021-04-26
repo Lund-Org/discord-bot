@@ -9,6 +9,9 @@ export class Player {
   @Column({ unique: true, nullable: false })
   discord_id: string;
 
+  @Column({ unique: true, nullable: true, default: null })
+  twitch_username: string;
+
   @Column()
   points: number;
 

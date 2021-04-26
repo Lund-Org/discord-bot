@@ -22,7 +22,8 @@ export const help = async ({ msg }: { msg: Message }) => {
   snippet.addField(`${prefix}gacha cards`, 'Permet de voir son inventaire. Utilisez les réactions pour pouvoir changer de page')
   snippet.addField(`${prefix}gacha gold id_de_carte`, 'Permet de sacrifier 5 cartes basiques en une carte dorée du même type')
   snippet.addField(`${prefix}gacha fusion id_de_carte`, 'Permet de créer une carte fusion en sacrifiant ses composants (voir http://lundprod.com pour plus d\'infos)')
-  snippet.addField(`${prefix}gacha profil`, 'Permet de voir son profil')
+  snippet.addField(`${prefix}gacha profile`, 'Permet de voir son profil')
   snippet.addField(`${prefix}gacha view id_de_carte`, 'Permet d\'avoir l\'aperçu d\'une carte')
+  snippet.addField(`${prefix}gacha twitch pseudo_twitch`, 'Permet de lier son compte Twitch à son profil Gacha')
   msg.channel.send(snippet)
 }
