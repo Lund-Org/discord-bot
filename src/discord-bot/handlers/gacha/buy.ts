@@ -41,7 +41,7 @@ async function securityChecks({ msg, player, cmd }: {
     }
   }
 
-  msg.channel.send('Erreur, le format est : "!!gacha buy nombre_entre_1_et_6"')
+  msg.channel.send('Erreur, le format est : "!!gacha buy <nombre entre 1 et 6>"')
   return null
 }
 

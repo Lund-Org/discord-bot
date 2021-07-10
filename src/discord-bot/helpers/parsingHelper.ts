@@ -17,6 +17,28 @@ export default {
     }
   },
   /**
+   * Parse the birthday command
+   * @param message The content of the message
+   */
+  parseBirthdayMessage(message: string): number[] | null {
+    const match = message.match(new RegExp(`${DataStore.getData('prefix')}birthday (\\d{1,2})\/(\\d{1,2})\/(\\d{4})`))
+
+    if (match && match.length === 4) {
+      const day = parseInt(match[1], 10)
+      const month = parseInt(match[2], 10)
+      const year = parseInt(match[3], 10)
+      const currentDate = new Date()
+
+      if (day >= 1 && day <= 31 && month >= 1 && month <= 12 &&
+        year > currentDate.getFullYear() - 100 && year < currentDate.getFullYear()
+      ) {
+        return [day, month, year]
+      }
+    }
+
+    return null
+  },
+  /**
    * Parse the google command
    * @param message The content of the message
    */

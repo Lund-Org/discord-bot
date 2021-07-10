@@ -13,7 +13,7 @@ function getTwitchUsername({ msg, cmd }: {
     return args[0];
   }
 
-  msg.channel.send('Erreur, le format est : "!!gacha twitch pseudo_twitch"')
+  msg.channel.send('Erreur, le format est : "!!gacha twitch <pseudo twitch>"')
   return null
 }
 

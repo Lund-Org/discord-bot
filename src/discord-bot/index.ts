@@ -4,10 +4,9 @@ import initializers from './initializers'
 import Handler from './handlers/Handler'
 import { getRepository } from 'typeorm'
 import { Pagination } from '../database/entities/Pagination'
-import { Player } from '../database/entities/Player'
 import { manageGachaPagination } from './helpers/discordEvent'
 
-export const initDiscord = () => {
+export const initDiscord = (): Promise<Client> => {
   return new Promise((resolve, reject) => {
     const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
     const handlers = handlerClasses.map((HandlerClass): Handler => {
@@ -64,5 +63,7 @@ export const initDiscord = () => {
     } catch (error) {
       reject(error);
     }
+
+    resolve(client);
   })
 }

@@ -12,6 +12,7 @@ import { profile } from './profile'
 import { twitch } from './twitch'
 import { view } from './view'
 import { getManager } from 'typeorm'
+import { sell } from './sell'
 
 const commands: Record<string, Function> = {
   buy: buy,
@@ -23,6 +24,7 @@ const commands: Record<string, Function> = {
   join: join,
   points: points,
   profile: profile,
+  sell: sell,
   twitch: twitch,
   view: view,
 }

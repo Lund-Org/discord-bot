@@ -7,6 +7,7 @@ import ProfilePictureHandler from './ProfilePictureHandler'
 import JoinAtHandler from './JoinAtHandler'
 import ShifumiHandler from './ShifumiHandler'
 import GachaHandler from './GachaHandler'
+import BirthdayHandler from './BirthdayHandler'
 
 export default [
   // Gacha needs to be first to give points
@@ -18,5 +19,6 @@ export default [
   ProfilePictureHandler,
   ShifumiHandler,
   JoinAtHandler,
-  PongHandler
+  PongHandler,
+  BirthdayHandler
 ]
