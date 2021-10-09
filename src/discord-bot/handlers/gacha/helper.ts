@@ -70,13 +70,17 @@ export async function addCardsToInventory(player: Player, cardsToAdd: CardDraw[]
       inventoriesItem.push(inventory)
     }
   })
-  if (totalPrice > 0) {
-    player.points -= totalPrice
-  }
-
-  await entityManager.save([
-    ...inventoriesItem,
-    ...(totalPrice > 0 ? [player] : [])
+  await Promise.all([
+    (
+      totalPrice > 0 ?
+        entityManager.query(
+        `UPDATE player
+        SET points = points - ?
+        WHERE id = ?`,
+        [totalPrice, player.id]
+      ) : Promise.resolve()
+    ),
+    entityManager.save(inventoriesItem)
   ])
 }
 

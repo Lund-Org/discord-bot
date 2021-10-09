@@ -1,10 +1,18 @@
 
 import http from 'http'
 import https from 'https'
-import express, { Application } from 'express'
+import express, { Application, Request, Response, NextFunction } from 'express'
 import { join } from 'path'
 import { readFileSync } from 'fs'
 import routesLoader from './routes'
+
+function ensureSecure(req: Request, res: Response, next: NextFunction) {
+  if (req.secure) {
+    // OK, continue
+    return next();
+  };
+  res.redirect('https://' + req.hostname + req.url); // express 4.x
+}
 
 export const initServer = () => {
   return new Promise((resolve) => {
@@ -14,6 +22,7 @@ export const initServer = () => {
     app.set("views", join(__dirname, "views"));
     app.set("view engine", "ejs");
     app.use(express.static(join(__dirname, 'public')));
+    app.all('*', ensureSecure);
 
     routesLoader(app);
 

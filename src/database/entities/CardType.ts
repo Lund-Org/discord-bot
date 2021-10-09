@@ -12,6 +12,9 @@ export class CardType {
   @Column({ nullable: false })
   description: string;
 
+  @Column({ nullable: false })
+  lore: string;
+
   @Column()
   level: number;
 
