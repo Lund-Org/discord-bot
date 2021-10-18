@@ -4,6 +4,8 @@ import parsingHelper from '../helpers/parsingHelper'
 import DataStore from '../helpers/dataStore'
 import { getRepository } from 'typeorm'
 import { Birthday } from '../../database/entities/Birthday'
+import { Player } from '../../database/entities/Player'
+import { giftPointsForBirthday } from '../../common/birthday'
 
 class BirthdayHandler extends Handler {
   validate(client: Client, msg: Message): Promise<boolean> {
@@ -28,6 +30,7 @@ class BirthdayHandler extends Handler {
 
       const userId = msg.author.id
       const birthday = await getRepository(Birthday).findOne({ discord_id: userId }) || new Birthday()
+      const newBirthday = !birthday.discord_id
 
       if (!birthday.discord_id) {
         birthday.discord_id = userId
@@ -50,6 +53,18 @@ class BirthdayHandler extends Handler {
     const date = new Date(year, month - 1, day)
 
     return (date instanceof Date && date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day)
+  }
+
+  async backport2021Points(day: number, month: number, discord_id: string) {
+    const birthday2021 = new Date(2021, month - 1, day)
+    
+    if (birthday2021.getTime() < Date.now()) {
+      const player = await getRepository(Player).findOne({ discord_id })
+
+      if (player) {
+        await giftPointsForBirthday(discord_id)
+      }
+    }
   }
 }
 

@@ -7,7 +7,7 @@ type XpByUser = {
   currentXP: number;
   id: number;
   discord_id: string;
-  twitch_username: string;
+  twitch_username: string|null;
   points: number;
   lastMessageDate: Date;
   lastDailyDraw: Date | null;

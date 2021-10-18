@@ -17,6 +17,7 @@ export const join = async ({ msg }: { msg: Message }) => {
     const entityManager = getManager()
 
     player = new Player()
+    player.username = msg.author.username
     player.discord_id = userId
     player.points = 0
     player.lastMessageDate = new Date()

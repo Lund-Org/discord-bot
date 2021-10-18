@@ -22,7 +22,9 @@ export const initServer = () => {
     app.set("views", join(__dirname, "views"));
     app.set("view engine", "ejs");
     app.use(express.static(join(__dirname, 'public')));
-    app.all('*', ensureSecure);
+    if (process.env.ENV !== 'dev') {
+      app.all('*', ensureSecure);
+    }
 
     routesLoader(app);
 

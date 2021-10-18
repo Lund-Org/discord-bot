@@ -6,6 +6,9 @@ export class Player {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: false })
+  username: string;
+
   @Column({ unique: true, nullable: false })
   discord_id: string;
 
