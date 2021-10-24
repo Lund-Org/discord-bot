@@ -2,9 +2,9 @@ import "reflect-metadata"
 import { initDiscord } from './discord-bot'
 import { initServer } from './express/server'
 import { initTwitchPubSub } from './twitch-pubsub'
-import { createConnection, getConnectionOptions } from 'typeorm';
-import { initCron } from "./cron";
-import { Client } from "discord.js";
+import { createConnection, getConnectionOptions } from 'typeorm'
+import { initCron } from "./cron"
+import { Client } from "discord.js"
 require('dotenv').config()
 
 getConnectionOptions().then((config) => {
@@ -36,5 +36,5 @@ getConnectionOptions().then((config) => {
   if ((isCustom && process.argv.includes('--bot')) || !isCustom) {
     initCron(discordClient as Client)
   }
-  console.log('=> Ready !');
+  console.log('=> Ready !')
 })

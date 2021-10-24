@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "npm run build && npm run start",
     "build": "rm -rf dist && mkdir dist && tsc --project tsconfig.json",
-    "postbuild": "node ./build.js",
     "start": "supervisor dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typeorm:migration:up": "./node_modules/.bin/ts-node ./node_modules/typeorm/cli.js migration:run",

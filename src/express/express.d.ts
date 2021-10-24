@@ -1,5 +1,5 @@
 declare namespace mb {
-  type HttpMethod = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head";
+  type HttpMethod = "all" | "get" | "post" | "put" | "delete" | "patch" | "options" | "head"
 
   type Route = {
     methods: HttpMethod[];

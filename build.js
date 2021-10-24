@@ -1,4 +1,5 @@
-const fse = require('fs-extra');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fse = require('fs-extra')
 
 console.log('--- Copy');
 [

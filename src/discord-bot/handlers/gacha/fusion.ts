@@ -39,7 +39,7 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
   }
 
   if (args.length === 1 && args[0].match(/^\d+$/)) {
-    const cardToCreateId = parseInt(args[0], 10);
+    const cardToCreateId = parseInt(args[0], 10)
     const cardToCreate = await getRepository(CardType).findOne({
       where: { id: cardToCreateId },
       relations: ['fusionDependencies']
@@ -47,11 +47,11 @@ export const fusion = async ({ msg, cmd }: { msg: Message;cmd: string[] }) => {
 
     if (!cardToCreate) {
       msg.channel.send('La carte n\'existe pas')
-      return;
+      return
     }
     if (!cardToCreate.isFusion) {
       msg.channel.send('La carte que tu veux créer n\'est pas une carte fusion')
-      return;
+      return
     }
 
     const dependencyIds = cardToCreate.fusionDependencies.map(x => x.id)

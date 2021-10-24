@@ -16,7 +16,7 @@ export const initDiscord = (): Promise<Client> => {
     client.on('ready', () => {
       console.log(`Logged in as ${client.user.tag} !`)
       initializers.forEach((initializer: Function) => initializer(client))
-      resolve(undefined);
+      resolve(undefined)
     })
 
     client.on('message', async (msg: Message) => {
@@ -40,13 +40,13 @@ export const initDiscord = (): Promise<Client> => {
       // When we receive a reaction we check if the reaction is partial or not
       try {
         if (reaction.partial) {
-          await reaction.fetch();
+          await reaction.fetch()
         }
         if (user.partial) {
-          await user.fetch();
+          await user.fetch()
         }
       } catch (error) {
-        return;
+        return
       }
 
       const matchingPagination = await getRepository(Pagination).findOne({
@@ -56,14 +56,14 @@ export const initDiscord = (): Promise<Client> => {
       if (matchingPagination) {
         await manageGachaPagination(matchingPagination, reaction, user as User)
       }
-    });
+    })
 
     try {
       client.login(process.env.BOT_TOKEN)
     } catch (error) {
-      reject(error);
+      reject(error)
     }
 
-    resolve(client);
+    resolve(client)
   })
 }

@@ -12,10 +12,10 @@ type XpByUser = {
   lastMessageDate: Date;
   lastDailyDraw: Date | null;
   joinDate: Date;
-};
+}
 type RankByUser = {
   level: { currentLevel: number; xpNextLevel: number };
-} & XpByUser;
+} & XpByUser
 
 const basicXP = 100
 const goldXP = 500
@@ -41,7 +41,7 @@ export async function getGlobalRanking(userToFilter: number[] = []): Promise<Ran
     LEFT JOIN player on player.id = t1.playerId
     GROUP BY playerId
     ORDER BY currentXP DESC
-  `) as XpByUser[];
+  `) as XpByUser[]
   const configLevelsJSON = await getRepository(Config).findOne({
     where: { name: GachaEnum.LEVELS }
   })
@@ -60,5 +60,5 @@ export async function getGlobalRanking(userToFilter: number[] = []): Promise<Ran
     }, { currentLevel: 1, xpNextLevel: 0 })
 
     return { ...xpByUser, level }
-  });
+  })
 }

@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import {MigrationInterface, QueryRunner} from "typeorm"
 
 export class AddConfig1615142888142 implements MigrationInterface {
     name = 'addConfig1615142888142'
@@ -28,12 +28,13 @@ export class AddConfig1615142888142 implements MigrationInterface {
             20: 60000
         }
 
-        await queryRunner.query("CREATE TABLE `config` (`id` int NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `value` json NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB");
-        await queryRunner.query(`INSERT INTO config (name, value) VALUES ('DROP_CHANCES', "${JSON.stringify(chances).replace(/"/g, '\\"')}");`);
-        await queryRunner.query(`INSERT INTO config(name, value) VALUES("LEVELS", "${JSON.stringify(levels).replace(/"/g, '\\"')}");`);
+        await queryRunner.query("CREATE TABLE `config` (`id` int NOT NULL AUTO_INCREMENT, `name` varchar(255) NOT NULL, `value` json NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB")
+        await queryRunner.query(`INSERT INTO config (name, value) VALUES ('DROP_CHANCES', "${JSON.stringify(chances).replace(/"/g, '\\"')}");`)
+        await queryRunner.query(`INSERT INTO config(name, value) VALUES("LEVELS", "${JSON.stringify(levels).replace(/"/g, '\\"')}");`)
+        await queryRunner.query(`INSERT INTO config(name, value) VALUES("PRICE", "${JSON.stringify({ price: 1000 }).replace(/"/g, '\\"')}");`)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query("DROP TABLE `config`");
+        await queryRunner.query("DROP TABLE `config`")
     }
 }

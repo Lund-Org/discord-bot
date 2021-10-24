@@ -105,3 +105,9 @@ dist
 
 ormconfig.json
 .env.true
+
+public/index.html
+public/static
+public/favicon.ico
+public/manifest.json
+public/robots.txt

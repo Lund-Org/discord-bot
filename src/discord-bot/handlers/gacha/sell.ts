@@ -7,8 +7,8 @@ import GachaEnum from "../../enums/GachaEnum"
 import { CardType } from "../../../database/entities/CardType"
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
 
-type SellConfig = { basic: number; gold: number };
-type CardRarity = 'basic'|'gold';
+type SellConfig = { basic: number; gold: number }
+type CardRarity = 'basic'|'gold'
 type StructuredData = {
   cardToSell: PlayerInventory;
   quantity: number;
@@ -26,9 +26,9 @@ async function securityChecks({ msg, player, cmd }: {
   const priceConfig: SellConfig = configPriceJSON.value as SellConfig
   const [commandSell, ...args] = cmd
 
-  if (args.length === 3 && args[0].match(/^\d$/) && ['basic', 'gold'].includes(args[1]) && args[2].match(/^\d$/)) {
+  if (args.length === 3 && args[0].match(/^\d+$/) && ['basic', 'gold'].includes(args[1]) && args[2].match(/^\d+$/)) {
     // does the card exist ?
-    const cardId = parseInt(args[0], 10);
+    const cardId = parseInt(args[0], 10)
     const cardToSell = await getRepository(CardType).findOne({ id: cardId })
 
     if (!cardToSell) {
@@ -37,7 +37,7 @@ async function securityChecks({ msg, player, cmd }: {
     }
 
     // does the user has the card ?
-    const quantity = parseInt(args[2], 10);
+    const quantity = parseInt(args[2], 10)
     const cardInPlayerInventory = player.inventories.find((inventory) => {
       return inventory.cardType.id === cardId && inventory.type === args[1]
     })
@@ -80,13 +80,17 @@ export const sell = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     return
   }
 
-  data.cardToSell.total -= data.quantity;
-  player.points += data.earningPoints;
-
-  await getManager().save([
-    data.cardToSell,
-    player
+  // To handle concurrency
+  await Promise.all([
+    await getManager().query(
+      `UPDATE player_inventory SET total = total - ${data.quantity} WHERE id = ?`,
+      [data.cardToSell.id]
+    ),
+    await getManager().query(
+      `UPDATE player SET points = points + ${data.earningPoints} WHERE id = ?`,
+      [player.id]
+    )
   ])
 
-  msg.channel.send(`Tu as gagné ${data.earningPoints} points`);
+  msg.channel.send(`Tu as gagné ${data.earningPoints} points`)
 }

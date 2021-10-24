@@ -1,21 +1,21 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { CardType } from "./CardType";
-import { Player } from "./Player";
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { CardType } from "./CardType"
+import { Player } from "./Player"
 
 @Entity()
 export class PlayerInventory {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
 
   @Column()
-  total: number;
+  total: number
 
   @Column()
-  type: string;
+  type: string
 
   @ManyToOne(() => Player, player => player.inventories)
-  player: Player;
+  player: Player
 
   @ManyToOne(() => CardType, cardType => cardType.playerInventories)
-  cardType: CardType;
+  cardType: CardType
 }

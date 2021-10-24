@@ -91,7 +91,7 @@ export default {
     const match = msg.match(new RegExp(`${DataStore.getData('prefix')}gacha (.*)`))
 
     if (match) {
-      return match[1].trim();
+      return match[1].trim()
     }
     return null
   }

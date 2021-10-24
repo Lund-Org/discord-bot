@@ -1,4 +1,4 @@
-import {MigrationInterface, QueryRunner} from "typeorm";
+import {MigrationInterface, QueryRunner} from "typeorm"
 
 const updates: {id: number; lore: string}[] = [
     { id: 1, lore: `Ces fameuses madeleines étaient le petit encas phare lors de stream. Pour parodier les placements de produits de vos Youtubers favoris, je me suis amusé à lire le dos du paquet, et les fameuses madeleines de Contres dans le 41 sont devenus un running gag.` },
@@ -107,14 +107,14 @@ export class AddLoreToCards1631564520430 implements MigrationInterface {
     name = 'AddLoreToCards1631564520430'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query("ALTER TABLE `card_type` ADD `lore` varchar(255) NOT NULL");
+        await queryRunner.query("ALTER TABLE `card_type` ADD `lore` text NOT NULL")
         for (const index in updates) {
-            await queryRunner.query(`UPDATE card_type SET lore=\`${updates[index].lore}\` WHERE id=${updates[index].id}`);
+            await queryRunner.query(`UPDATE card_type SET lore="${updates[index].lore.replace(/"/g, '\\"')}" WHERE id=${updates[index].id}`)
         }
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query("ALTER TABLE `card_type` DROP COLUMN `lore`");
+        await queryRunner.query("ALTER TABLE `card_type` DROP COLUMN `lore`")
     }
 
 }

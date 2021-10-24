@@ -4,7 +4,7 @@ import { getRepository } from "typeorm"
 import DataStore from "../../helpers/dataStore"
 import GachaEnum from "../../enums/GachaEnum"
 
-type PriceConfig = { price: number };
+type PriceConfig = { price: number }
 
 export const help = async ({ msg }: { msg: Message }) => {
   const configPriceJSON = await getRepository(Config).findOne({

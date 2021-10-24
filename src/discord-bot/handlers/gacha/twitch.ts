@@ -10,7 +10,7 @@ function getTwitchUsername({ msg, cmd }: {
   const [commandBuy, ...args] = cmd
 
   if (args.length === 1 && args[0].match(/^\w+$/)) {
-    return args[0];
+    return args[0]
   }
 
   msg.channel.send('Erreur, le format est : "!!gacha twitch <pseudo twitch>"')
@@ -33,9 +33,9 @@ export const twitch = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
   player.twitch_username = twitchUsername.toLowerCase()
   
   try {
-    await getRepository(Player).save(player);
-    msg.channel.send(`Pseudo twitch attaché`);
+    await getRepository(Player).save(player)
+    msg.channel.send(`Pseudo twitch attaché`)
   } catch (e) {
-    msg.channel.send(`Une erreur s'est produite lors de l'enregistrement du pseudo Twitch`);
+    msg.channel.send(`Une erreur s'est produite lors de l'enregistrement du pseudo Twitch`)
   }
 }

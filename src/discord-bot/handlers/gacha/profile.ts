@@ -15,5 +15,5 @@ export const profile = async ({ msg }: { msg: Message }) => {
 
   const [rank] = await getGlobalRanking([player.id])
 
-  msg.channel.send(`Tu es niveau ${rank.level.currentLevel} avec ${rank.currentXP}xp. Le prochain niveau est obtenable avec ${rank.level.xpNextLevel}xp`)
+  msg.channel.send(`Tu es niveau ${rank.level.currentLevel} avec ${rank.currentXP}xp. Le prochain niveau est obtenable avec ${rank.level.xpNextLevel}xp. Tu peux retrouver plus d'informations ici : https://lundprod.com/profile/${msg.author.id}`)
 }

@@ -1,16 +1,17 @@
-import { Message } from "discord.js"
+import { Message, MessageEmbed } from "discord.js"
 import { getManager } from "typeorm"
 import { Player } from "../../../database/entities/Player"
 import { CardType } from "../../../database/entities/CardType"
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
 import { userNotFound } from './helper'
+import { getCardsToGold } from '../../../common/profile'
 
 async function createOrUpdateGold(player: Player, cardToGold: CardType, inventoryCardGold: PlayerInventory) {
   const entityManager = getManager()
 
   if (inventoryCardGold) {
     inventoryCardGold.total += 1
-    await entityManager.save(inventoryCardGold);
+    await entityManager.save(inventoryCardGold)
   } else {
     const playerInventory = new PlayerInventory()
 
@@ -18,7 +19,7 @@ async function createOrUpdateGold(player: Player, cardToGold: CardType, inventor
     playerInventory.total = 1
     playerInventory.type = 'gold'
     playerInventory.cardType = cardToGold
-    await entityManager.save(playerInventory);
+    await entityManager.save(playerInventory)
   }
 }
 
@@ -26,7 +27,7 @@ async function decreaseBasic(inventoryCardBasic: PlayerInventory) {
   const entityManager = getManager()
 
   inventoryCardBasic.total -= 5
-  await entityManager.save(inventoryCardBasic);
+  await entityManager.save(inventoryCardBasic)
 }
 
 export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
@@ -37,8 +38,24 @@ export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     return
   }
 
-  if (args.length === 1 && args[0].match(/^\d+$/)) {
-    const cardToGold = parseInt(args[0], 10);
+  if (args.length === 1 && args[0] === "?") {
+    const cardsToGold = await getCardsToGold(msg.author.id)
+    const tenFirstCardsToGold = cardsToGold.slice(0, 10)
+
+    const snippet: MessageEmbed = new MessageEmbed({
+      title: 'Liste des 10 premières cartes que tu peux golder :'
+    })
+    tenFirstCardsToGold.forEach((tenFirstCardToGold) => {
+      snippet.addField(
+        `#${tenFirstCardToGold.cardType.id} ${tenFirstCardToGold.cardType.name}`,
+        `Nombre de cartes basiques actuel : ${tenFirstCardToGold.total}`
+      )
+    })
+
+    msg.channel.send(`${msg.author.username}, voici un extrait des 10 premières cartes que tu peux golder, tu peux retrouver la liste de tes cartes à golder sur ton profil : https://lundprod.com/profile/${msg.author.id}`)
+    msg.channel.send(snippet)
+  } else if (args.length === 1 && args[0].match(/^\d+$/)) {
+    const cardToGold = parseInt(args[0], 10)
     const inventoryCardBasic = player.inventories.find((inventory) => {
       return inventory.cardType.id === cardToGold && inventory.type === 'basic'
     })

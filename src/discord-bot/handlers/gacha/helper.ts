@@ -1,10 +1,10 @@
-import { Message } from "discord.js";
-import GachaEnum from "../../enums/GachaEnum";
+import { Message } from "discord.js"
+import GachaEnum from "../../enums/GachaEnum"
 import { getManager, getRepository } from "typeorm"
-import { Player } from "../../../database/entities/Player";
-import { PlayerInventory } from "../../../database/entities/PlayerInventory";
-import { Config } from "../../../database/entities/Config";
-import { CardType } from "../../../database/entities/CardType";
+import { Player } from "../../../database/entities/Player"
+import { PlayerInventory } from "../../../database/entities/PlayerInventory"
+import { Config } from "../../../database/entities/Config"
+import { CardType } from "../../../database/entities/CardType"
 import {
   HEIGHT_HEADER,
   MARGIN_LEFT_CARD,
@@ -16,8 +16,8 @@ import {
   CARDS_PER_ROW,
   CardDraw
 } from '../../helpers/CanvasData'
-import { createCanvas } from "canvas";
-import { setupCardDrawBody, setupCardDrawHeader } from "../../helpers/canvas";
+import { createCanvas } from "canvas"
+import { setupCardDrawBody, setupCardDrawHeader } from "../../helpers/canvas"
 
 type ChancesConfig = {
   '1': number;

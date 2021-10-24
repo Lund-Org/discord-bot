@@ -32,7 +32,7 @@ class BirthdayHandler extends Handler {
       const birthday = await getRepository(Birthday).findOne({ discord_id: userId }) || new Birthday()
       const newBirthday = !birthday.discord_id
 
-      if (!birthday.discord_id) {
+      if (newBirthday) {
         birthday.discord_id = userId
       }
       birthday.birthday_day = day
@@ -41,6 +41,9 @@ class BirthdayHandler extends Handler {
       try {
         await getRepository(Birthday).save(birthday)
         msg.reply(`Anniversaire enregistré !`)
+        if (newBirthday) {
+          await this.backportThisYearPoints(day, month, msg.author.id)
+        }
       } catch (e) {
         msg.reply(`Une erreur est arrivée lors de la sauvegarde de l'anniversaire`)
       }
@@ -52,13 +55,18 @@ class BirthdayHandler extends Handler {
   checkValidDate(day: number, month: number, year: number) {
     const date = new Date(year, month - 1, day)
 
-    return (date instanceof Date && date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day)
+    return (
+      date instanceof Date &&
+      date.getFullYear() === year &&
+      date.getMonth() + 1 === month &&
+      date.getDate() === day
+    )
   }
 
-  async backport2021Points(day: number, month: number, discord_id: string) {
-    const birthday2021 = new Date(2021, month - 1, day)
-    
-    if (birthday2021.getTime() < Date.now()) {
+  async backportThisYearPoints(day: number, month: number, discord_id: string) {
+    const birthdayThisYear = new Date((new Date()).getFullYear(), month - 1, day)
+
+    if (birthdayThisYear.getTime() < Date.now()) {
       const player = await getRepository(Player).findOne({ discord_id })
 
       if (player) {
