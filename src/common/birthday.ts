@@ -3,7 +3,7 @@ import { getManager, getRepository } from "typeorm"
 
 export const givenPointsForBirthday = 6000
 
-export async function giftPointsForBirthday(discord_id: string) {
+export async function giftPointsForBirthday(discord_id: string): Promise<boolean> {
   const player = await getRepository(Player).findOne({ discord_id })
 
   if (player) {
@@ -12,5 +12,7 @@ export async function giftPointsForBirthday(discord_id: string) {
       `UPDATE player SET points = points + ${givenPointsForBirthday} WHERE id = ?`,
       [player.id]
     )
+    return true
   }
+  return false
 }

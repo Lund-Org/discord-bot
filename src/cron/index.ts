@@ -2,19 +2,27 @@ import { CronJob } from 'cron'
 import { Birthday } from '../database/entities/Birthday'
 import { getRepository } from 'typeorm'
 import { Client, TextChannel } from 'discord.js'
-import { giftPointsForBirthday } from '../common/birthday'
+import { giftPointsForBirthday, givenPointsForBirthday } from '../common/birthday'
 
 function setupBirthdayCron(discordClient: Client) {
-  const job = new CronJob('0 0 0 * * *', () => {
-    const date = new Date()
+  const job = new CronJob(
+    '0 0 0 * * *',
+    async () => {
+      const date = new Date()
 
-    // get the birthday entities
-    getRepository(Birthday)
-      .find({ birthday_day: date.getDate(), birthday_month: date.getMonth() + 1 })
-      .then((birthdays: Birthday[]) => {
-        birthdays.forEach((birthday) => {
+      try {
+        // get the birthday entities
+        const birthdays = await getRepository(Birthday)
+          .find({
+            birthday_day: date.getDate(),
+            birthday_month: date.getMonth() + 1
+          })
+
+        for (const birthday of birthdays) {
+          const guilds = discordClient.guilds.cache.array()
+
           // find the member in the guilds
-          discordClient.guilds.cache.forEach((guild) => {
+          for (const guild of guilds) {
             const target = guild.members.cache.find((member) => member.id === birthday.discord_id)
 
             if (target) {
@@ -24,15 +32,22 @@ function setupBirthdayCron(discordClient: Client) {
 
               // get the general channel
               if (generalChannel && generalChannel.isText()) {
-                (generalChannel as TextChannel).send(`Bon anniversaire ${target.toString()} 🎂`)
-                giftPointsForBirthday(target.id).then(() => {
-                  console.log(`Birthday wished for ${target.id}`)
-                })
+                const hasEarnPoints = await giftPointsForBirthday(target.id)
+                console.log(`Birthday wished for ${target.id}`)
+
+                if (hasEarnPoints) {
+                  (generalChannel as TextChannel).send(`Bon anniversaire ${target.toString()} 🎂. En tant que joueur de gacha, tu as gagné ${givenPointsForBirthday} points :)`)
+                } else {
+                  (generalChannel as TextChannel).send(`Bon anniversaire ${target.toString()} 🎂`)
+                }
               }
             }
-          })
-        })
-      })
+          }
+        }
+      } catch (e) {
+        console.log('Cron error :')
+        console.log(e)
+      }
     },
     null,
     true,
