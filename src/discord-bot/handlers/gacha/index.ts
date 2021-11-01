@@ -12,6 +12,7 @@ import { profile } from './profile'
 import { twitch } from './twitch'
 import { view } from './view'
 import { getManager } from 'typeorm'
+import { sell } from './sell'
 
 const commands: Record<string, Function> = {
   buy: buy,
@@ -23,6 +24,7 @@ const commands: Record<string, Function> = {
   join: join,
   points: points,
   profile: profile,
+  sell: sell,
   twitch: twitch,
   view: view,
 }
@@ -32,7 +34,7 @@ function splitArgs(cmd: string) {
 }
 
 export const gacha = (client: Client, msg: Message, gachaCmd: string|null): void => {
-  let cmd = gachaCmd ? splitArgs(gachaCmd) : null;
+  let cmd = gachaCmd ? splitArgs(gachaCmd) : null
 
   if (!gachaCmd || !commands[cmd[0]]) {
     msg.channel.send("La commande n'existe pas. Voici les commandes possibles :")
@@ -51,6 +53,6 @@ export const addPoints = async ({ msg }: { msg: Message }) => {
   if (player && Date.now() - player.lastMessageDate.getTime() > delay) {
     player.points += 50
     player.lastMessageDate = new Date()
-    await entityManager.save(player);
+    await entityManager.save(player)
   }
 }

@@ -4,10 +4,9 @@ import initializers from './initializers'
 import Handler from './handlers/Handler'
 import { getRepository } from 'typeorm'
 import { Pagination } from '../database/entities/Pagination'
-import { Player } from '../database/entities/Player'
 import { manageGachaPagination } from './helpers/discordEvent'
 
-export const initDiscord = () => {
+export const initDiscord = (): Promise<Client> => {
   return new Promise((resolve, reject) => {
     const client = new Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] })
     const handlers = handlerClasses.map((HandlerClass): Handler => {
@@ -17,7 +16,7 @@ export const initDiscord = () => {
     client.on('ready', () => {
       console.log(`Logged in as ${client.user.tag} !`)
       initializers.forEach((initializer: Function) => initializer(client))
-      resolve(undefined);
+      resolve(undefined)
     })
 
     client.on('message', async (msg: Message) => {
@@ -41,13 +40,13 @@ export const initDiscord = () => {
       // When we receive a reaction we check if the reaction is partial or not
       try {
         if (reaction.partial) {
-          await reaction.fetch();
+          await reaction.fetch()
         }
         if (user.partial) {
-          await user.fetch();
+          await user.fetch()
         }
       } catch (error) {
-        return;
+        return
       }
 
       const matchingPagination = await getRepository(Pagination).findOne({
@@ -57,12 +56,14 @@ export const initDiscord = () => {
       if (matchingPagination) {
         await manageGachaPagination(matchingPagination, reaction, user as User)
       }
-    });
+    })
 
     try {
       client.login(process.env.BOT_TOKEN)
     } catch (error) {
-      reject(error);
+      reject(error)
     }
+
+    resolve(client)
   })
 }

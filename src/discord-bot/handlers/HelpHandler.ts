@@ -15,6 +15,7 @@ class HelpHandler extends Handler {
     const snippet: MessageEmbed = new MessageEmbed({
       title: 'Liste des commandes disponibles :'
     })
+    snippet.addField(`${prefix}birthday jj/mm/yyyy`, 'Enregistre votre anniversaire 🎂')
     snippet.addField(`${prefix}google recherche`, 'Effectue une recherche basé sur ce qu\'il y a après la commande')
     snippet.addField(`${prefix}join`, 'Récupère la date d\'arrivée au serveur')
     snippet.addField(`${prefix}poll [question] [rep 1] [rep 2] ...`, 'Effectue un sondage basé sur les réactions (10 réponses max.)')

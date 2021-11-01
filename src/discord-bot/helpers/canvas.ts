@@ -1,4 +1,4 @@
-import { loadImage, CanvasRenderingContext2D } from "canvas";
+import { loadImage, CanvasRenderingContext2D } from "canvas"
 import {
   MARGIN_LEFT_HEADER,
   HEIGHT_HEADER,
@@ -24,7 +24,7 @@ function setIdOfCard(
   ctx: CanvasRenderingContext2D
 ) {
   ctx.font = '35px Sans'
-  ctx.textAlign = 'right';
+  ctx.textAlign = 'right'
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
   ctx.fillText(`#${cardDraw.cardType.id}`, offsetX + WIDTH_CARD - INNER_HORIZONTAL_MARGIN, offsetY + 15)
@@ -46,7 +46,7 @@ async function setImageOfCard(
       offsetY + CARD_HEADER,
       WIDTH_CARD - INNER_HORIZONTAL_MARGIN,
       CARD_IMAGE_HEIGHT
-    );
+    )
   } catch (e) {
     ctx.fillStyle = "#000000"
     ctx.fillRect(
@@ -67,7 +67,7 @@ function setTitleOfCard(
   const title = cardDraw.cardType.name
   let fontSize = 41
 
-  ctx.textAlign = 'left';
+  ctx.textAlign = 'left'
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
   ctx.font = `${fontSize}px Sans`
@@ -87,7 +87,7 @@ function setDescriptionOfCard(
   const fragmentedDescription = cardDraw.cardType.description.split(' ')
   let linesInput = 1
   ctx.font = `35px Sans`
-  ctx.textAlign = 'left';
+  ctx.textAlign = 'left'
   ctx.textBaseline = 'ideographic'
   ctx.fillStyle = '#000000'
 
@@ -130,7 +130,7 @@ async function setStarsOfCard(
         offsetY + HEIGHT_CARD - starImg.height,
         starImg.width,
         starImg.height
-      );
+      )
     }
   } catch (e) {
   }

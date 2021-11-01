@@ -9,28 +9,28 @@
 
     if (window.location.hash) {
       // Fragment exists
-      const q = window.location.hash.split('#')[1];
-      const vars = q.split('&');
+      const q = window.location.hash.split('#')[1]
+      const vars = q.split('&')
 
       for (let i = 0; i < vars.length; i++) {
-        const [key, value] = vars[i].split('=');
+        const [key, value] = vars[i].split('=')
 
         if (decodeURIComponent(key) === 'access_token') {
-          const http = new XMLHttpRequest();
-          const url = '/twitch-token';
+          const http = new XMLHttpRequest()
+          const url = '/twitch-token'
           const params = '?token=' + value
 
-          http.open('POST', url + params, true);
+          http.open('POST', url + params, true)
           http.onreadystatechange = function () {
             if (http.readyState === 4 && http.status === 200) {
-              closePage();
+              closePage()
             }
           }
-          http.send();
+          http.send()
         }
       }
     } else {
-      closePage();
+      closePage()
     }
   </script>
 </html>

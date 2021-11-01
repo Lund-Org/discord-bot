@@ -5,7 +5,7 @@ import { Player } from '../../../database/entities/Player'
 import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
 import GachaEnum from "../../enums/GachaEnum"
 
-type PriceConfig = { price: number };
+type PriceConfig = { price: number }
 
 async function securityChecks({ msg, player, cmd }: {
   msg: Message;
@@ -19,7 +19,7 @@ async function securityChecks({ msg, player, cmd }: {
   const [commandBuy, ...args] = cmd
 
   if (args.length === 1 && args[0].match(/^\d$/)) {
-    const cardToBuy = parseInt(args[0], 10);
+    const cardToBuy = parseInt(args[0], 10)
 
     if (cardToBuy < 1 || cardToBuy > 6) {
       msg.channel.send('Erreur, le nombre de cartes achetable doit être entre 1 et 6')
@@ -41,7 +41,7 @@ async function securityChecks({ msg, player, cmd }: {
     }
   }
 
-  msg.channel.send('Erreur, le format est : "!!gacha buy nombre_entre_1_et_6"')
+  msg.channel.send('Erreur, le format est : "!!gacha buy <nombre entre 1 et 6>"')
   return null
 }
 
@@ -64,8 +64,8 @@ export const buy = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
 
   const cards = await drawCards(cardToDraw.cardToBuy)
   const canvas = await generateDrawImage(msg.author.username, cards)
-  const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png');
+  const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
 
   await addCardsToInventory(player, cards, cardToDraw.totalPrice)
-  msg.channel.send(`Les ${cardToDraw.cardToBuy} cartes que tu as acheté`, attachment);
+  msg.channel.send(`Les ${cardToDraw.cardToBuy} cartes que tu as acheté`, attachment)
 }

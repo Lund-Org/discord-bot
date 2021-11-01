@@ -1,36 +1,39 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad } from "typeorm";
-import { PlayerInventory } from "./PlayerInventory";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad } from "typeorm"
+import { PlayerInventory } from "./PlayerInventory"
 
 @Entity()
 export class Player {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number
+
+  @Column({ nullable: false, type: 'text' })
+  username: string
 
   @Column({ unique: true, nullable: false })
-  discord_id: string;
+  discord_id: string
 
   @Column({ unique: true, nullable: true, default: null })
-  twitch_username: string;
+  twitch_username: string
 
   @Column()
-  points: number;
+  points: number
 
   @Column({ default: () => 'NOW()', nullable: false })
-  lastMessageDate: Date;
+  lastMessageDate: Date
 
   @Column({ default: null, nullable: true })
-  lastDailyDraw: Date|null;
+  lastDailyDraw: Date|null
 
   @Column({ default: () => 'NOW()', nullable: false })
-  joinDate: Date;
+  joinDate: Date
 
   @OneToMany(() => PlayerInventory, inventory => inventory.player)
-  inventories: PlayerInventory[];
+  inventories: PlayerInventory[]
 
   @AfterLoad()
   sortAttributes() {
     if (this?.inventories?.length) {
-      this.inventories.sort((a, b) => (a.cardType?.id < b.cardType?.id ? -1 : a.cardType?.id === b.cardType?.id ? 0 : 1));
+      this.inventories.sort((a, b) => (a.cardType?.id < b.cardType?.id ? -1 : a.cardType?.id === b.cardType?.id ? 0 : 1))
     }
   }
 }

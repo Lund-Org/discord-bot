@@ -8,7 +8,7 @@ export const getManyCards = async (req: Request, res: Response): Promise<void> =
   }
 
   if (req.query.filters) {
-    const filterParams = JSON.parse(req.query.filters.toString());
+    const filterParams = JSON.parse(req.query.filters.toString())
 
     if (filterParams.fusion) {
       filters.where.push({ fusion: true })
@@ -22,7 +22,7 @@ export const getManyCards = async (req: Request, res: Response): Promise<void> =
   }
 
   const cardTypeRepository = await getRepository(CardType)
-  const cardTypes = await cardTypeRepository.find({ ...filters, relations: ["fusionDependencies"] });
+  const cardTypes = await cardTypeRepository.find({ ...filters, relations: ["fusionDependencies"] })
 
-  res.json(cardTypes);
+  res.json(cardTypes)
 }

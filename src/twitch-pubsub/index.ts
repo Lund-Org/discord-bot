@@ -1,9 +1,9 @@
-import { ApiClient, RefreshableAuthProvider, StaticAuthProvider } from 'twitch';
-import { PubSubClient, PubSubRedemptionMessage } from 'twitch-pubsub-client';
+import { ApiClient, RefreshableAuthProvider, StaticAuthProvider } from 'twitch'
+import { PubSubClient, PubSubRedemptionMessage } from 'twitch-pubsub-client'
 import { createInterface } from 'readline'
-import { getConnection, getRepository } from 'typeorm';
-import { Config } from '../database/entities/Config';
-import { Player } from '../database/entities/Player';
+import { getConnection, getRepository } from 'typeorm'
+import { Config } from '../database/entities/Config'
+import { Player } from '../database/entities/Player'
 
 type TokenConfig = {
   accessToken: string;
@@ -14,8 +14,8 @@ type TokenConfig = {
 const scope = 'channel:read:redemptions'
 
 export const initTwitchPubSub = async () => {
-  let retry = true;
-  let authProvider: StaticAuthProvider;
+  let retry = true
+  let authProvider: StaticAuthProvider
   let tokenData: TokenConfig | null = null
   const clientId = process.env.TWITCH_CLIENT_ID
   const clientSecret = process.env.TWITCH_SECRET_ID
@@ -65,7 +65,7 @@ export const initTwitchPubSub = async () => {
         console.log('Auth from cache')
         authProvider = new StaticAuthProvider(clientId, tokenData.accessToken, [scope])
         console.log('Auth done')
-        return true;
+        return true
       } else {
         throw new Error('Token data from cache')
       }
@@ -73,7 +73,7 @@ export const initTwitchPubSub = async () => {
       console.log(err)
     }
 
-    return false;
+    return false
   }
 
   async function setRefresher(config: Config) {
@@ -92,13 +92,13 @@ export const initTwitchPubSub = async () => {
           await overwriteConfig(config)
         }
       }
-    );
+    )
 
     console.log('Refresh Auth done')
     const apiClient = new ApiClient({ authProvider: refreshableAuthProvider })
     console.log('Api client connected')
-    const pubSubClient = new PubSubClient();
-    const userId = await pubSubClient.registerUserListener(apiClient);
+    const pubSubClient = new PubSubClient()
+    const userId = await pubSubClient.registerUserListener(apiClient)
 
     console.log('pubSubClient connected')
     await pubSubClient.onRedemption(userId, async (message: PubSubRedemptionMessage) => {
@@ -107,7 +107,7 @@ export const initTwitchPubSub = async () => {
         getRepository(Config).findOne({ name: 'TWITCH_REWARD' })
       ]).then(async ([player, twitchReward]) => {
         if (!player || !twitchReward) {
-          return;
+          return
         }
 
         const rewardData = twitchReward.value as unknown as { rewardName: string; points: number }
@@ -118,14 +118,14 @@ export const initTwitchPubSub = async () => {
             .update(Player)
             .set({ points: () => `points + ${rewardData.points}` })
             .where('id = :id', { id: player.id })
-            .execute();
+            .execute()
         }
       })
-    });
+    })
   }
 
   do {
-    const config = await getConfig();
+    const config = await getConfig()
 
     if (config) {
       const isAuthAvailable = getAuthProvider(config)
@@ -140,5 +140,5 @@ export const initTwitchPubSub = async () => {
       await prompt()
     }
 
-  } while (retry);
+  } while (retry)
 }

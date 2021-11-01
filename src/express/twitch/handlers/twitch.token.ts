@@ -5,7 +5,7 @@ import { Config } from '../../../database/entities/Config'
 export const postTwitchToken = async (req: Request, res: Response): Promise<void> => {
   if (req.query.token && req.query.token.length === 30) {
     const existingConfig = await getRepository(Config).findOne({ name: 'TWITCH_TOKENS' })
-    const tokenConf = existingConfig || new Config();
+    const tokenConf = existingConfig || new Config()
 
     tokenConf.name = 'TWITCH_TOKENS'
     tokenConf.value = {
@@ -14,9 +14,9 @@ export const postTwitchToken = async (req: Request, res: Response): Promise<void
       expiryDate: null
     }
 
-    await getRepository(Config).save(tokenConf);
-    res.json({ success: true });
+    await getRepository(Config).save(tokenConf)
+    res.json({ success: true })
   } else {
-    res.json({ success: false });
+    res.json({ success: false })
   }
 }

@@ -1,9 +1,9 @@
 import { Message, MessageEmbed, MessageReaction, User } from "discord.js"
-import { Pagination } from "../../../database/entities/Pagination";
-import { getConnection, getRepository } from "typeorm";
+import { Pagination } from "../../../database/entities/Pagination"
+import { getConnection, getRepository } from "typeorm"
 import { userNotFound } from './helper'
-import { PlayerInventory } from "../../../database/entities/PlayerInventory";
-import { Player } from "../../../database/entities/Player";
+import { PlayerInventory } from "../../../database/entities/PlayerInventory"
+import { Player } from "../../../database/entities/Player"
 
 async function paginateMessage({ msg, inventoryMessage }: { msg: Message; inventoryMessage: Message }) {
   return getConnection()
@@ -17,7 +17,7 @@ async function paginateMessage({ msg, inventoryMessage }: { msg: Message; invent
         discordMessage_id: inventoryMessage.id
       }
     ])
-    .execute();
+    .execute()
 }
 
 function buildSnippet(username: string, cardInventories: PlayerInventory[]) {
@@ -75,5 +75,5 @@ export const updateMessage = async (pagination: Pagination, reaction: MessageRea
       page: pagination.page
     })
     .where("id = :id", { id: pagination.id })
-    .execute();
+    .execute()
 }
