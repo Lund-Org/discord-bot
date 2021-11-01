@@ -38,7 +38,7 @@ async function setImageOfCard(
 ) {
   try {
     const img = await loadImage(
-      join(__dirname, '../../express/public/images/', cardDraw.cardType.imageName)
+      join(__dirname, '../../../public/images/', cardDraw.cardType.imageName)
     )
     ctx.drawImage(
       img,
@@ -120,7 +120,7 @@ async function setStarsOfCard(
   const numberOfStars = cardDraw.cardType.level
   try {
     const starImg = await loadImage(
-      join(__dirname, `../../express/public/images/star${cardDraw.isGold ? '-gold' : ''}.png`)
+      join(__dirname, `../../../public/images/star${cardDraw.isGold ? '-gold' : ''}.png`)
     )
 
     for (let i = 0; i < numberOfStars; ++i) {
