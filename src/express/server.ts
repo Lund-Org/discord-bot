@@ -8,10 +8,9 @@ import routesLoader from './routes'
 
 function ensureSecure(req: Request, res: Response, next: NextFunction) {
   if (req.secure) {
-    // OK, continue
     return next()
   }
-  res.redirect('https://' + req.hostname + req.url) // express 4.x
+  res.redirect('https://' + req.hostname + req.url)
 }
 
 export const initServer = () => {
@@ -21,10 +20,10 @@ export const initServer = () => {
     app.set('port', process.env.PORT || 80)
     app.set("views", join(__dirname, "views"))
     app.set("view engine", "ejs")
-    app.use(express.static(join(__dirname, '..', '..', 'public')))
     if (process.env.ENV !== 'dev') {
-      app.all('*', ensureSecure)
+      app.use(ensureSecure)
     }
+    app.use(express.static(join(__dirname, '..', '..', 'public')))
 
     routesLoader(app)
 
