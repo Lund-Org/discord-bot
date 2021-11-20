@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad, ManyToMany, JoinTable } from "typeorm"
+import { Gift } from "./Gift"
 import { PlayerInventory } from "./PlayerInventory"
 
 @Entity()
@@ -29,6 +30,9 @@ export class Player {
 
   @OneToMany(() => PlayerInventory, inventory => inventory.player)
   inventories: PlayerInventory[]
+
+  @ManyToMany(() => Gift, gift => gift.players)
+  gifts: Gift[]
 
   @AfterLoad()
   sortAttributes() {

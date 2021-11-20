@@ -1,6 +1,6 @@
 import { getManager, getRepository } from "typeorm"
 import { Config } from "../database/entities/Config"
-import GachaEnum from "../discord-bot/enums/GachaEnum"
+import { GachaConfigEnum } from "../discord-bot/enums/GachaEnum"
 
 type XpByUser = {
   playerId: number;
@@ -43,7 +43,7 @@ export async function getGlobalRanking(userToFilter: number[] = []): Promise<Ran
     ORDER BY currentXP DESC
   `) as XpByUser[]
   const configLevelsJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.LEVELS }
+    where: { name: GachaConfigEnum.LEVELS }
   })
   const levelConfig: Record<string, number> = configLevelsJSON.value as Record<string, number>
 

@@ -3,7 +3,7 @@ import { Config } from "../../../database/entities/Config"
 import { getManager, getRepository } from "typeorm"
 import { Player } from '../../../database/entities/Player'
 import { userNotFound } from './helper'
-import GachaEnum from "../../enums/GachaEnum"
+import { GachaConfigEnum } from "../../enums/GachaEnum"
 import { CardType } from "../../../database/entities/CardType"
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
 
@@ -21,7 +21,7 @@ async function securityChecks({ msg, player, cmd }: {
   cmd: string[];
 }): Promise<StructuredData|null> {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.SELL }
+    where: { name: GachaConfigEnum.SELL }
   })
   const priceConfig: SellConfig = configPriceJSON.value as SellConfig
   const [commandSell, ...args] = cmd

@@ -1,8 +1,12 @@
-enum GachaEnum {
+export enum GachaConfigEnum {
   DROP_CHANCES = 'DROP_CHANCES',
   LEVELS = 'LEVELS',
   PRICE = 'PRICE',
   SELL = 'SELL'
 }
 
-export default GachaEnum
+export enum GachaGiftEnum {
+  POINTS = 'points',
+  CARD = 'card',
+  GOLD = 'gold'
+}

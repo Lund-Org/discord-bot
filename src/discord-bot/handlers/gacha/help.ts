@@ -2,13 +2,13 @@ import { Message, MessageEmbed } from "discord.js"
 import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import DataStore from "../../helpers/dataStore"
-import GachaEnum from "../../enums/GachaEnum"
+import { GachaConfigEnum } from "../../enums/GachaEnum"
 
 type PriceConfig = { price: number }
 
 export const help = async ({ msg }: { msg: Message }) => {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.PRICE }
+    where: { name: GachaConfigEnum.PRICE }
   })
   const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
   const prefix = DataStore.getData('prefix')
