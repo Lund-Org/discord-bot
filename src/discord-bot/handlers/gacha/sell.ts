@@ -82,14 +82,11 @@ export const sell = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
 
   // To handle concurrency
   await Promise.all([
-    await getManager().query(
+    getManager().query(
       `UPDATE player_inventory SET total = total - ${data.quantity} WHERE id = ?`,
       [data.cardToSell.id]
     ),
-    await getManager().query(
-      `UPDATE player SET points = points + ${data.earningPoints} WHERE id = ?`,
-      [player.id]
-    )
+    player.addPoints(data.earningPoints)
   ])
 
   msg.channel.send(`Tu as gagné ${data.earningPoints} points`)

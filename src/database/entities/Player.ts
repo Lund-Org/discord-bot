@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad, ManyToMany, JoinTable, getManager } from "typeorm"
 import { Gift } from "./Gift"
 import { PlayerInventory } from "./PlayerInventory"
 
@@ -39,5 +39,25 @@ export class Player {
     if (this?.inventories?.length) {
       this.inventories.sort((a, b) => (a.cardType?.id < b.cardType?.id ? -1 : a.cardType?.id === b.cardType?.id ? 0 : 1))
     }
+  }
+
+  async saveNewGift(gift: Gift) {
+    await getManager().query(
+      'INSERT INTO gifts_players(`gift`, `player`) VALUES(?, ?)',
+      [gift.id, this.id]
+    )
+  }
+
+  async addPoints(points: number) {
+    if (points === 0) {
+      return;
+    }
+
+    await getManager().query(
+      `UPDATE player
+        SET points = points + ?
+        WHERE id = ?`,
+      [points, this.id]
+    )
   }
 }

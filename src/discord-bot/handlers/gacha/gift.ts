@@ -15,15 +15,15 @@ function processGift(gift: Gift) {
     switch (Object.keys(bonus)[0]) {
       case 'points':
         actions.points = bonus.points
-        message += `- ${bonus.points} points`
+        message += `• ${bonus.points} points\n`
         break;
       case 'card':
         actions.basicCard = bonus.card
-        message += `- ${bonus.card} cartes`
+        message += `• ${bonus.card} carte(s)\n`
         break;
       case 'gold':
         actions.goldCard = bonus.gold
-        message += `- ${bonus.gold} cartes dorées`
+        message += `• ${bonus.gold} carte(s) dorée(s)\n`
         break;
     }
   })
@@ -32,13 +32,8 @@ function processGift(gift: Gift) {
 }
 
 /** Method for the config keyword */
-async function addPoints(points: number|undefined, playerId: number) {
-  return points ? getManager().query(
-    `UPDATE player
-        SET points = points + ?
-        WHERE id = ?`,
-    [points, playerId]
-  ) : Promise.resolve()
+async function addPoints(points: number|undefined) {
+  return Promise.resolve(points || 0)
 }
 async function getBasicCards(numberOfCards: number|undefined) {
   return numberOfCards ? drawCards(numberOfCards) : Promise.resolve([])
@@ -55,6 +50,8 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
   const player = await userNotFound({
     msg, relations: [
       'gifts',
+      'inventories',
+      'inventories.cardType'
     ]
   })
 
@@ -80,18 +77,25 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     }
 
     const { message, actions } = processGift(gift)
-    const [_, basicCards, goldCards] = await Promise.all([
-      addPoints(actions.points, player.id),
+    const [pointsToAdd, basicCards, goldCards] = await Promise.all([
+      addPoints(actions.points),
       getBasicCards(actions.basicCard),
       getGoldCards(actions.goldCard)
     ])
     const unionCards = [...basicCards, ...goldCards]
+    let attachment
 
-    const canvas = await generateDrawImage(msg.author.username, unionCards)
-    const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
+    if (unionCards.length) {
+      const canvas = await generateDrawImage(msg.author.username, unionCards)
+      attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
+    }
 
-    await addCardsToInventory(player, unionCards, 0)
-    msg.channel.send(message, attachment)
+    await Promise.all([
+      player.addPoints(pointsToAdd),
+      player.saveNewGift(gift),
+      addCardsToInventory(player, unionCards, 0)
+    ])
+    attachment ? msg.channel.send(message, attachment) : msg.channel.send(message)
   } else {
     msg.channel.send('Erreur, le format est : "!!gacha gift <code>')
   }
