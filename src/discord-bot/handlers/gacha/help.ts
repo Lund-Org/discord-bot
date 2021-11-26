@@ -26,5 +26,6 @@ export const help = async ({ msg }: { msg: Message }) => {
   snippet.addField(`${prefix}gacha sell <id de carte> <basic|gold> <quantité à vendre>`, 'Permet de vendre des cartes contre des points')
   snippet.addField(`${prefix}gacha view <id de carte>`, 'Permet d\'avoir l\'aperçu d\'une carte')
   snippet.addField(`${prefix}gacha twitch <pseudo twitch>`, 'Permet de lier son compte Twitch à son profil Gacha')
+  snippet.addField(`${prefix}gacha gift <code>`, 'Permet de gagner un cadeau')
   msg.channel.send(snippet)
 }
