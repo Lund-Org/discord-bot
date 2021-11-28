@@ -1,5 +1,5 @@
 import { Message } from "discord.js"
-import GachaEnum from "../../enums/GachaEnum"
+import { GachaConfigEnum } from "../../enums/GachaEnum"
 import { getManager, getRepository } from "typeorm"
 import { Player } from "../../../database/entities/Player"
 import { PlayerInventory } from "../../../database/entities/PlayerInventory"
@@ -71,22 +71,14 @@ export async function addCardsToInventory(player: Player, cardsToAdd: CardDraw[]
     }
   })
   await Promise.all([
-    (
-      totalPrice > 0 ?
-        entityManager.query(
-        `UPDATE player
-        SET points = points - ?
-        WHERE id = ?`,
-        [totalPrice, player.id]
-      ) : Promise.resolve()
-    ),
+    player.addPoints(-totalPrice),
     entityManager.save(inventoriesItem)
   ])
 }
 
 export const drawCards = async (nbCardToDraw: number): Promise<CardDraw[]> => {
   const chancesJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.DROP_CHANCES }
+    where: { name: GachaConfigEnum.DROP_CHANCES }
   })
   const chancesConfig: ChancesConfig = chancesJSON.value as ChancesConfig
   const cardsDraw: CardDraw[] = []

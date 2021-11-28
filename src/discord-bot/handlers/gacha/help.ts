@@ -2,13 +2,13 @@ import { Message, MessageEmbed } from "discord.js"
 import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import DataStore from "../../helpers/dataStore"
-import GachaEnum from "../../enums/GachaEnum"
+import { GachaConfigEnum } from "../../enums/GachaEnum"
 
 type PriceConfig = { price: number }
 
 export const help = async ({ msg }: { msg: Message }) => {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.PRICE }
+    where: { name: GachaConfigEnum.PRICE }
   })
   const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
   const prefix = DataStore.getData('prefix')
@@ -26,5 +26,6 @@ export const help = async ({ msg }: { msg: Message }) => {
   snippet.addField(`${prefix}gacha sell <id de carte> <basic|gold> <quantité à vendre>`, 'Permet de vendre des cartes contre des points')
   snippet.addField(`${prefix}gacha view <id de carte>`, 'Permet d\'avoir l\'aperçu d\'une carte')
   snippet.addField(`${prefix}gacha twitch <pseudo twitch>`, 'Permet de lier son compte Twitch à son profil Gacha')
+  snippet.addField(`${prefix}gacha gift <code>`, 'Permet de gagner un cadeau')
   msg.channel.send(snippet)
 }

@@ -3,7 +3,7 @@ import { Config } from "../../../database/entities/Config"
 import { getRepository } from "typeorm"
 import { Player } from '../../../database/entities/Player'
 import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
-import GachaEnum from "../../enums/GachaEnum"
+import { GachaConfigEnum } from "../../enums/GachaEnum"
 
 type PriceConfig = { price: number }
 
@@ -13,7 +13,7 @@ async function securityChecks({ msg, player, cmd }: {
   cmd: string[];
 }): Promise<{ cardToBuy: number;totalPrice: number }|null> {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaEnum.PRICE }
+    where: { name: GachaConfigEnum.PRICE }
   })
   const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
   const [commandBuy, ...args] = cmd

@@ -13,8 +13,11 @@ import { twitch } from './twitch'
 import { view } from './view'
 import { getManager } from 'typeorm'
 import { sell } from './sell'
+import { gift } from './gift'
 
-const commands: Record<string, Function> = {
+type Handler = (data: { client: Client, msg: Message; cmd: string[] }) => Promise<void>;
+
+const commands: Record<string, Handler> = {
   buy: buy,
   cards: cards,
   daily: daily,
@@ -27,6 +30,7 @@ const commands: Record<string, Function> = {
   sell: sell,
   twitch: twitch,
   view: view,
+  gift: gift,
 }
 
 function splitArgs(cmd: string) {
@@ -44,7 +48,7 @@ export const gacha = (client: Client, msg: Message, gachaCmd: string|null): void
   commands[cmd[0]]({ client, msg, cmd })
 }
 
-export const addPoints = async ({ msg }: { msg: Message }) => {
+export const addPoints = async ({ msg }: { msg: Message }): Promise<void> => {
   const entityManager = getManager()
   const player = await userNotFound({ msg, withWarning: false })
   const delay = 60 * 1000 // one minute

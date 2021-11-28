@@ -1,5 +1,5 @@
 import { Player } from '../database/entities/Player'
-import { getManager, getRepository } from "typeorm"
+import { getRepository } from "typeorm"
 
 export const givenPointsForBirthday = 6000
 
@@ -8,10 +8,7 @@ export async function giftPointsForBirthday(discord_id: string): Promise<boolean
 
   if (player) {
     // to handle concurrency
-    await getManager().query(
-      `UPDATE player SET points = points + ${givenPointsForBirthday} WHERE id = ?`,
-      [player.id]
-    )
+    await player.addPoints(givenPointsForBirthday)
     return true
   }
   return false
