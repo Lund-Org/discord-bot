@@ -57,26 +57,32 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
 
   if (args.length === 1 && args[0].match(/[\w\d]+/)) {
     const code = args[0]
-    const gift = await getRepository(Gift).createQueryBuilder('gift')
-      .leftJoinAndSelect("gift.players", "players")
+
+    const foundGift = await getRepository(Gift)
+      .createQueryBuilder('gift')
       .where('code = :code', { code })
       .andWhere('beginning_datetime < :beginDateTime', { beginDateTime: new Date() })
       .andWhere('end_datetime > :endDateTime', { endDateTime: new Date() })
-      .andWhere(
-        // Check that the user never get it
-        new Brackets((qb) => {
-          qb.where('players.id IS NULL')
-            .orWhere('players.id <> :player_id', { player_id: player.id })
-        })
-      )
       .getOne()
 
-    if (!gift) {
-      msg.reply('Le cadeau n\'existe pas ou a déjà été récupéré')
+    if (!foundGift) {
+      msg.reply('Le cadeau n\'existe pas ou tu n\'es pas dans sa période de validité')
       return;
     }
 
-    const { message, actions } = processGift(gift)
+    const hasGift = await getRepository(Gift)
+      .createQueryBuilder('gift')
+      .leftJoinAndSelect("gift.players", "players")
+      .where('gift.id = :gift_id', { gift_id: foundGift.id})
+      .andWhere('players.id = :player_id', { player_id: player.id })
+      .getOne()
+
+    if (!hasGift) {
+      msg.reply('Le cadeau a déjà été récupéré')
+      return;
+    }
+
+    const { message, actions } = processGift(foundGift)
     const [pointsToAdd, basicCards, goldCards] = await Promise.all([
       addPoints(actions.points),
       getBasicCards(actions.basicCard),
@@ -92,7 +98,7 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
 
     await Promise.all([
       player.addPoints(pointsToAdd),
-      player.saveNewGift(gift),
+      player.saveNewGift(foundGift),
       addCardsToInventory(player, unionCards, 0)
     ])
     attachment ? msg.channel.send(message, attachment) : msg.channel.send(message)
