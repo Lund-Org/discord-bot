@@ -77,7 +77,7 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
       .andWhere('players.id = :player_id', { player_id: player.id })
       .getOne()
 
-    if (!hasGift) {
+    if (hasGift) {
       msg.reply('Le cadeau a déjà été récupéré')
       return;
     }
