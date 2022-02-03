@@ -49,7 +49,7 @@ export const cards = async ({ msg }: { msg: Message }) => {
   }
 
   const snippet = buildSnippet(msg.author.username, tenFirstCards)
-  const inventoryMessage = await msg.channel.send(snippet)
+  const inventoryMessage = await msg.channel.send({ embeds: [snippet] })
 
   if (player.inventories.length > 10) {
     await inventoryMessage.react('◀')
@@ -67,7 +67,7 @@ export const updateMessage = async (pagination: Pagination, reaction: MessageRea
   const paginateTenCards = player.inventories.slice(pagination.page * 10, pagination.page * 10 + 10)
   const snippet = buildSnippet(user.username, paginateTenCards)
 
-  await reaction.message.edit(snippet)
+  await reaction.message.edit({ embeds: [snippet] })
   await getConnection()
     .createQueryBuilder()
     .update(Pagination)

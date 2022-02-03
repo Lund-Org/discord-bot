@@ -1,11 +1,13 @@
 import "reflect-metadata"
 import { initDiscord } from './discord-bot'
 import { initServer } from './express/server'
-import { initTwitchPubSub } from './twitch-pubsub'
+// import { initTwitchPubSub } from './twitch-pubsub'
 import { createConnection, getConnectionOptions } from 'typeorm'
 import { initCron } from "./cron"
 import { Client } from "discord.js"
-require('dotenv').config()
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 getConnectionOptions().then((config) => {
   return createConnection(config)
@@ -20,14 +22,14 @@ getConnectionOptions().then((config) => {
     if (process.argv.includes('--web')) {
       bootstrapPromises.push(initServer())
     }
-    if (process.argv.includes('--twitch')) {
-      bootstrapPromises.push(initTwitchPubSub())
-    }
+    // if (process.argv.includes('--twitch')) {
+    //   bootstrapPromises.push(initTwitchPubSub())
+    // }
   } else {
     bootstrapPromises.push(Promise.resolve(false))
     bootstrapPromises.push(initDiscord())
     bootstrapPromises.push(initServer())
-    bootstrapPromises.push(initTwitchPubSub())
+    // bootstrapPromises.push(initTwitchPubSub())
   }
   console.log('Database connected')
   return Promise.all(bootstrapPromises)

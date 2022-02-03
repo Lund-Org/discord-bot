@@ -23,7 +23,7 @@ class HelpHandler extends Handler {
     snippet.addField('pong', 'ping 🏓')
     snippet.addField(`${prefix}pp pseudo`, 'Récupère l\'image de profil de l\'utilisateur (ne pas @ la personne)')
     snippet.addField(`${prefix}shifumi pierre|feuille|ciseaux`, 'Joue à Shifumi avec le bot')
-    msg.channel.send(snippet)
+    msg.channel.send({ embeds: [snippet] })
     return true
   }
 }

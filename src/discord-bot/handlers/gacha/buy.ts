@@ -67,5 +67,8 @@ export const buy = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
   const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
 
   await addCardsToInventory(player, cards, cardToDraw.totalPrice)
-  msg.channel.send(`Les ${cardToDraw.cardToBuy} cartes que tu as acheté`, attachment)
+  msg.channel.send({
+    content: `Les ${cardToDraw.cardToBuy} cartes que tu as acheté`,
+    files: [attachment]
+  })
 }

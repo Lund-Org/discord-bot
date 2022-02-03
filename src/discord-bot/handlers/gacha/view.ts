@@ -17,7 +17,9 @@ export const view = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
       const canvas = await generateDrawImage(msg.author.username, [{ cardType: cardToCreate, isGold: false }])
       const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
 
-      msg.channel.send('', attachment)
+      msg.channel.send({
+        files: [attachment]
+      })
     } else {
       msg.channel.send('La carte n\'existe pas')
     }

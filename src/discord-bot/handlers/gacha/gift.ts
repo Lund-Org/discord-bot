@@ -101,7 +101,10 @@ export const gift = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
       player.saveNewGift(foundGift),
       addCardsToInventory(player, unionCards, 0)
     ])
-    attachment ? msg.channel.send(message, attachment) : msg.channel.send(message)
+    attachment ? msg.channel.send({
+      content: message,
+      files: [attachment]
+    }) : msg.channel.send(message)
   } else {
     msg.channel.send('Erreur, le format est : "!!gacha gift <code>')
   }

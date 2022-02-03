@@ -50,9 +50,12 @@ export const join = async ({ msg }: { msg: Message }) => {
     const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
 
     await addCardsToInventory(player, cards, 0)
-    msg.channel.send(`Bienvenue dans le gacha, voici tes 8 premières cartes ! ${
-      birthdayBonus ? `Ton anniversaire étant passé, tu as gagné ${givenPointsForBirthday} points bonus` : ''
-    }`, attachment)
+    msg.channel.send({
+      content: `Bienvenue dans le gacha, voici tes 8 premières cartes ! ${
+        birthdayBonus ? `Ton anniversaire étant passé, tu as gagné ${givenPointsForBirthday} points bonus` : ''
+      }`,
+      files: [attachment]
+    })
   } catch (e) {
     console.log(e)
     msg.channel.send("Une erreur est survenue lors de la création du compte")

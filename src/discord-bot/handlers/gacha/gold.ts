@@ -53,7 +53,7 @@ export const gold = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
     })
 
     msg.channel.send(`${msg.author.username}, voici un extrait des 10 premières cartes que tu peux golder, tu peux retrouver la liste de tes cartes à golder sur ton profil : https://lundprod.com/profile/${msg.author.id}`)
-    msg.channel.send(snippet)
+    msg.channel.send({ embeds: [snippet] })
   } else if (args.length === 1 && args[0].match(/^\d+$/)) {
     const cardToGold = parseInt(args[0], 10)
     const inventoryCardBasic = player.inventories.find((inventory) => {

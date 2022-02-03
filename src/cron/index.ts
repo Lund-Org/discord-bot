@@ -19,10 +19,10 @@ function setupBirthdayCron(discordClient: Client) {
           })
 
         for (const birthday of birthdays) {
-          const guilds = discordClient.guilds.cache.array()
+          const guilds = discordClient.guilds.cache
 
           // find the member in the guilds
-          for (const guild of guilds) {
+          for (const [_, guild] of guilds) {
             const target = guild.members.cache.find((member) => member.id === birthday.discord_id)
 
             if (target) {

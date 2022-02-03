@@ -40,7 +40,10 @@ export const daily = async ({ msg }: { msg: Message }) => {
 
     await addCardsToInventory(player, cards, 0)
     await setDailyDraw(dailyDrawDate, player.id)
-    msg.channel.send(`Voici ton tirage quotidien GRA-TUIT`, attachment)
+    msg.channel.send({
+      content: `Voici ton tirage quotidien GRA-TUIT`,
+      files: [attachment]
+    })
   } else {
     msg.channel.send('Tu as déjà fait ton tirage quotidien')
   }

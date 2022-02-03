@@ -25,7 +25,7 @@ export default {
    * @param msg The message to analyse
    */
   isMemeChannel (msg: Message): boolean {
-    if (msg.channel.type === 'text') {
+    if (msg.channel.type === 'GUILD_TEXT') {
       const channel: TextChannel = msg.channel as TextChannel
 
       return channel.name.includes('memes')

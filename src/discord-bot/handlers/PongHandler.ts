@@ -1,4 +1,4 @@
-import { Client, Message, Channel, TextChannel } from 'discord.js'
+import { Client, Message, TextChannel } from 'discord.js'
 import Handler from './Handler'
 
 class PongHandler extends Handler {
@@ -13,7 +13,7 @@ class PongHandler extends Handler {
     return false
   }
 
-  processFault (channel: Channel, response: string) {
+  processFault (channel: Message['channel'], response: string) {
     if (!(channel instanceof TextChannel)) {
       return
     }
