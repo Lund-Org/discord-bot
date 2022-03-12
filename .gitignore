@@ -104,6 +104,7 @@ dist
 .tern-port
 
 ormconfig.json
+ormconfig-*.json
 .env.true
 
 public/index.html

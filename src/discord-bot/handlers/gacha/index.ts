@@ -54,7 +54,8 @@ export const addPoints = async ({ msg }: { msg: Message }): Promise<void> => {
   const delay = 60 * 1000 // one minute
 
   // if last message is in less than 1 minute
-  if (player && Date.now() - player.lastMessageDate.getTime() > delay) {
+  // AND less than 15 000 points
+  if (player && Date.now() - player.lastMessageDate.getTime() > delay && player.points < 15000) {
     player.points += 50
     player.lastMessageDate = new Date()
     await entityManager.save(player)
