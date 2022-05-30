@@ -1,4 +1,4 @@
-import { Message, MessageAttachment } from "discord.js"
+import { CommandInteraction, Message, MessageAttachment } from "discord.js"
 import { getConnection } from "typeorm"
 import { Player } from "../../../database/entities/Player"
 import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
@@ -10,8 +10,8 @@ function hasAlreadyDrawAvailable(player: Player): boolean {
   return player.lastDailyDraw ? player.lastDailyDraw.getTime() <= beginningOfTheDay.getTime() : true
 }
 
-async function setDailyDraw (date: Date, playerId: number): Promise<void> {
-  await getConnection()
+async function setDailyDraw (date: Date, playerId: number) {
+  return getConnection()
     .createQueryBuilder()
     .update(Player)
     .set({ lastDailyDraw: date })
@@ -19,9 +19,9 @@ async function setDailyDraw (date: Date, playerId: number): Promise<void> {
     .execute()
 }
 
-export const daily = async ({ msg }: { msg: Message }) => {
+export const daily = async (interaction: CommandInteraction) => {
   const player = await userNotFound({
-    msg, relations: [
+    interaction, relations: [
       'inventories',
       'inventories.cardType',
     ] })
@@ -31,20 +31,21 @@ export const daily = async ({ msg }: { msg: Message }) => {
     return
   }
 
-  const hasAlreadyDraw = hasAlreadyDrawAvailable(player)
+  await interaction.deferReply();
+  const hasAlreadyDraw = hasAlreadyDrawAvailable(player);
 
   if (hasAlreadyDraw) {
-    const cards = await drawCards(1)
-    const canvas = await generateDrawImage(msg.author.username, cards)
-    const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
+    const cards = await drawCards(1);
+    const canvas = await generateDrawImage(interaction.user.username, cards);
+    const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png');
 
-    await addCardsToInventory(player, cards, 0)
-    await setDailyDraw(dailyDrawDate, player.id)
-    msg.channel.send({
+    await addCardsToInventory(player, cards, 0);
+    await setDailyDraw(dailyDrawDate, player.id);
+    interaction.editReply({
       content: `Voici ton tirage quotidien GRA-TUIT`,
       files: [attachment]
-    })
+    });
   } else {
-    msg.channel.send('Tu as déjà fait ton tirage quotidien')
+    interaction.editReply('Tu as déjà fait ton tirage quotidien');
   }
 }

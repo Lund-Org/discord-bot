@@ -39,51 +39,6 @@ export default {
     return null
   },
   /**
-   * Parse the google command
-   * @param message The content of the message
-   */
-  parseGoogleMessage (message: string): string {
-    const match = message.match(new RegExp(`${DataStore.getData('prefix')}google (.*)`))
-
-    if (match) {
-      return encodeURI(match[1])
-    } else {
-      return ''
-    }
-  },
-  /**
-   * Parse the pp command
-   * @param message The content of the message
-   */
-  async parseProfilePictureMessage(message: Message): Promise<User|null> {
-    const match = message.content.match(new RegExp(`${DataStore.getData('prefix')}pp (.*)`))
-
-    if (match) {
-      const member = (await message.guild.members.fetch({
-        query: match[1].toLowerCase(),
-        limit: 1
-      })).first()
-
-      if (member) {
-        return member.user
-      }
-    }
-    return null
-  },
-  /**
-   * Parse the pp command
-   * @param msg The content of the message
-   * @param availableValues The valid values for the command
-   */
-  parseShifumiMessage(msg: string, availableValues: ShifumiEnum[]): ShifumiEnum | null {
-    const match = msg.match(new RegExp(`${DataStore.getData('prefix')}shifumi (.*)`))
-
-    if (match && availableValues.reduce((accumulator, value) => accumulator || value === match[1], false)) {
-      return availableValues.find(x => x === match[1])
-    }
-    return null
-  },
-  /**
    * Parse the gacha command
    * @param msg The content of the message
    */

@@ -5,9 +5,11 @@ import Handler from './handlers/Handler'
 import { getRepository } from 'typeorm'
 import { Pagination } from '../database/entities/Pagination'
 import { manageGachaPagination } from './helpers/discordEvent'
+import { initCommands } from './commands/initializer'
+import { commandsResponses, menusCallback } from './commands'
 
 export const initDiscord = (): Promise<Client> => {
-  return new Promise((resolve, reject) => {
+  return initCommands().then(() => {
     const client = new Client({
       partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
       intents: [
@@ -26,7 +28,6 @@ export const initDiscord = (): Promise<Client> => {
     client.on('ready', () => {
       console.log(`Logged in as ${client.user.tag} !`)
       initializers.forEach((initializer: (client: Client) => void) => initializer(client))
-      resolve(undefined)
     })
 
     client.on('messageCreate', async (msg: Message) => {
@@ -76,12 +77,22 @@ export const initDiscord = (): Promise<Client> => {
       }
     })
 
-    try {
-      client.login(process.env.BOT_TOKEN)
-    } catch (error) {
-      reject(error)
-    }
+    client.on('interactionCreate', async (interaction) => {
+      if (interaction.isCommand()) {
+        for (const cmdCallback of commandsResponses) {
+          if (interaction.commandName === cmdCallback.type) {
+            await cmdCallback.callback(interaction);
+            return;
+          }
+        }
+      }
+      if (interaction.isSelectMenu()) {
+        for (const menuCallback of menusCallback) {
+          await menuCallback(interaction);
+        }
+      }
+    });
 
-    resolve(client)
+    return client.login(process.env.BOT_TOKEN).then(() => client)
   })
 }

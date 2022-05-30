@@ -1,4 +1,4 @@
-import { Message } from "discord.js"
+import { CommandInteraction, Message } from "discord.js"
 import { getRepository } from "typeorm"
 import { Player } from '../../../database/entities/Player'
 import { userNotFound } from './helper'
@@ -17,25 +17,21 @@ function getTwitchUsername({ msg, cmd }: {
   return null
 }
 
-export const twitch = async ({ msg, cmd }: { msg: Message; cmd: string[] }) => {
-  const player = await userNotFound({ msg })
+export const twitch = async (interaction: CommandInteraction) => {
+  const player = await userNotFound({ interaction })
 
   if (!player) {
     return
   }
 
-  const twitchUsername = await getTwitchUsername({ msg, cmd })
-
-  if (twitchUsername === null) {
-    return
-  }
+  const twitchUsername = interaction.options.getString('username', true);
 
   player.twitch_username = twitchUsername.toLowerCase()
   
   try {
     await getRepository(Player).save(player)
-    msg.channel.send(`Pseudo twitch attaché`)
+    interaction.reply(`Pseudo twitch attaché`)
   } catch (e) {
-    msg.channel.send(`Une erreur s'est produite lors de l'enregistrement du pseudo Twitch`)
+    interaction.reply(`Une erreur s'est produite lors de l'enregistrement du pseudo Twitch`)
   }
 }

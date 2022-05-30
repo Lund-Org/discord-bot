@@ -1,4 +1,4 @@
-import { Message, MessageAttachment } from "discord.js"
+import { CommandInteraction, Message, MessageAttachment } from "discord.js"
 import { Birthday } from "../../../database/entities/Birthday"
 import { getManager, getRepository } from "typeorm"
 import { Player } from "../../../database/entities/Player"
@@ -21,22 +21,22 @@ async function hasBirthdayAndBeforeDate(discordId: string) {
   return (birthdayThisYear.getTime() < Date.now())
 }
 
-export const join = async ({ msg }: { msg: Message }) => {
-  const userId = msg.author.id
+export const join = async (interaction: CommandInteraction) => {
+  const userId = interaction.user.id
   const playerRepository = await getRepository(Player)
   let player = await playerRepository.findOne({ where: { discord_id: userId } })
 
   if (player) {
-    msg.channel.send("Ton compte existe déjà")
-    return
+    return interaction.reply("Ton compte existe déjà")
   }
 
+  await interaction.deferReply();
   try {
     const entityManager = getManager()
     const birthdayBonus = await hasBirthdayAndBeforeDate(userId)
 
     player = new Player()
-    player.username = msg.author.username
+    player.username = interaction.user.username
     player.discord_id = userId
     player.points = birthdayBonus ? givenPointsForBirthday : 0
     player.lastMessageDate = new Date()
@@ -46,11 +46,11 @@ export const join = async ({ msg }: { msg: Message }) => {
     await entityManager.save(player)
 
     const cards = await drawCards(8)
-    const canvas = await generateDrawImage(msg.author.username, cards)
+    const canvas = await generateDrawImage(interaction.user.username, cards)
     const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
 
     await addCardsToInventory(player, cards, 0)
-    msg.channel.send({
+    return interaction.editReply({
       content: `Bienvenue dans le gacha, voici tes 8 premières cartes ! ${
         birthdayBonus ? `Ton anniversaire étant passé, tu as gagné ${givenPointsForBirthday} points bonus` : ''
       }`,
@@ -58,6 +58,6 @@ export const join = async ({ msg }: { msg: Message }) => {
     })
   } catch (e) {
     console.log(e)
-    msg.channel.send("Une erreur est survenue lors de la création du compte")
+    return interaction.editReply("Une erreur est survenue lors de la création du compte")
   }
 }

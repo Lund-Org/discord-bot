@@ -1,4 +1,4 @@
-import { Message } from "discord.js"
+import { CommandInteraction, SelectMenuInteraction } from "discord.js"
 import { GachaConfigEnum } from "../../enums/GachaEnum"
 import { getManager, getRepository } from "typeorm"
 import { Player } from "../../../database/entities/Player"
@@ -27,11 +27,11 @@ type ChancesConfig = {
 }
 
 export const userNotFound = async ({
-  msg,
+  interaction,
   withWarning = true,
   relations = []
-}: { msg: Message; withWarning?: boolean; relations?: string[] }) => {
-  const userId = msg.author.id
+}: { interaction: CommandInteraction | SelectMenuInteraction; withWarning?: boolean; relations?: string[] }) => {
+  const userId = interaction.user.id
   const player = await getRepository(Player).findOne({
     where: { discord_id: userId },
     relations
@@ -42,7 +42,7 @@ export const userNotFound = async ({
   }
 
   if (withWarning) {
-    msg.channel.send(`Avant de pouvoir jouer, crée un compte avec la commande "${process.env.COMMAND_PREFIX}gacha join"`)
+    interaction.reply(`Avant de pouvoir jouer, crée un compte avec la commande "${process.env.COMMAND_PREFIX}gacha join"`)
   }
   return null
 }
