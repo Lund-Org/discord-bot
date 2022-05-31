@@ -1,0 +1,13 @@
+# Add files here to ignore them from prettier formatting
+
+config
+dist
+public
+scripts
+
+build.js
+.eslintrc
+
+*.json
+*.html
+*.md

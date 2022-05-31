@@ -43,7 +43,7 @@
 //         tokenData = config.value as unknown as AccessToken
 //         console.log('Auth from cache')
 //         const clientCredentialsAuthProvider = new ClientCredentialsAuthProvider(clientId, clientSecret)
-        
+
 //         tokenData = await clientCredentialsAuthProvider.getAccessToken()
 
 //         authProvider = new StaticAuthProvider(clientId, tokenData.accessToken, [scope])

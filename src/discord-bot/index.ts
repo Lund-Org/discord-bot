@@ -1,12 +1,14 @@
-import { Client, Intents, Message, MessageReaction, User } from 'discord.js'
-import handlerClasses from './handlers'
-import initializers from './initializers'
-import Handler from './handlers/Handler'
-import { getRepository } from 'typeorm'
-import { Pagination } from '../database/entities/Pagination'
-import { manageGachaPagination } from './helpers/discordEvent'
-import { initCommands } from './commands/initializer'
-import { commandsResponses, menusCallback } from './commands'
+import { Client, Intents, Message, MessageReaction, User } from 'discord.js';
+import { getRepository } from 'typeorm';
+
+import initializers from './initializers';
+import CreateHandlerClasses from './handlers/createHandlers';
+import UpdateHandlerClasses from './handlers/updateHandlers';
+import { commandsResponses, menusCallback } from './commands';
+import { Handler } from './handlers/Handler';
+import { initCommands } from './commands/initializer';
+import { manageGachaPagination } from './helpers/discordEvent';
+import { Pagination } from '../database/entities/Pagination';
 
 export const initDiscord = (): Promise<Client> => {
   return initCommands().then(() => {
@@ -19,33 +21,55 @@ export const initDiscord = (): Promise<Client> => {
         Intents.FLAGS.GUILD_MESSAGES,
         Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
         Intents.FLAGS.GUILD_SCHEDULED_EVENTS,
-      ]
-    })
-    const handlers = handlerClasses.map((HandlerClass): Handler => {
-      return new HandlerClass()
-    })
+      ],
+    });
+    const createHandlers = CreateHandlerClasses.map((HandlerClass): Handler => {
+      return new HandlerClass();
+    });
+    const updateHandlers = UpdateHandlerClasses.map((HandlerClass): Handler => {
+      return new HandlerClass();
+    });
 
     client.on('ready', () => {
-      console.log(`Logged in as ${client.user.tag} !`)
-      initializers.forEach((initializer: (client: Client) => void) => initializer(client))
-    })
+      console.log(`Logged in as ${client.user.tag} !`);
+      initializers.forEach((initializer: (client: Client) => void) =>
+        initializer(client),
+      );
+    });
 
     client.on('messageCreate', async (msg: Message) => {
-      for (const handler of handlers) {
-        const validation = await handler.validate(client, msg)
+      for (const handler of createHandlers) {
+        const validation = await handler.validate(client, msg);
 
         if (validation) {
           try {
-            const result = await handler.process(client, msg)
+            const result = await handler.process(client, msg);
             if (result) {
-              break
+              break;
             }
           } catch (e) {
-            console.log(e)
+            console.error(e);
           }
         }
       }
-    })
+    });
+
+    client.on('messageUpdate', async (msg: Message) => {
+      for (const handler of updateHandlers) {
+        const validation = await handler.validate(client, msg);
+
+        if (validation) {
+          try {
+            const result = await handler.process(client, msg);
+            if (result) {
+              break;
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+    });
 
     client.on('messageReactionAdd', async (reaction, user) => {
       let fullReaction: MessageReaction;
@@ -53,29 +77,33 @@ export const initDiscord = (): Promise<Client> => {
       // When we receive a reaction we check if the reaction is partial or not
       try {
         if (reaction.partial) {
-          fullReaction = await reaction.fetch()
+          fullReaction = await reaction.fetch();
         } else {
-          fullReaction = reaction as MessageReaction
+          fullReaction = reaction as MessageReaction;
         }
         if (user.partial) {
-          await user.fetch()
+          await user.fetch();
         }
       } catch (error) {
-        return
+        console.error(error);
+        return;
       }
 
       const matchingPagination = await getRepository(Pagination).findOne({
-        where: { discordUser_id: user.id, discordMessage_id: fullReaction.message.id }
-      })
+        where: {
+          discordUser_id: user.id,
+          discordMessage_id: fullReaction.message.id,
+        },
+      });
 
       if (matchingPagination) {
         await manageGachaPagination(
           matchingPagination,
           fullReaction,
-          user as User
-        )
+          user as User,
+        );
       }
-    })
+    });
 
     client.on('interactionCreate', async (interaction) => {
       if (interaction.isCommand()) {
@@ -93,6 +121,6 @@ export const initDiscord = (): Promise<Client> => {
       }
     });
 
-    return client.login(process.env.BOT_TOKEN).then(() => client)
-  })
-}
+    return client.login(process.env.BOT_TOKEN).then(() => client);
+  });
+};

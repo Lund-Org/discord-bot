@@ -1,8 +1,11 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { HowLongToBeatService, HowLongToBeatEntry } from 'howlongtobeat';
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { HowLongToBeatService } from 'howlongtobeat';
 
-type HLTBLabelCode = 'gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist'
+type HLTBLabelCode =
+  | 'gameplayMain'
+  | 'gameplayMainExtra'
+  | 'gameplayCompletionist';
 const CMD_NAME = 'howlongtobeat' as const;
 
 export function howlongtobeatCmd() {
@@ -10,16 +13,14 @@ export function howlongtobeatCmd() {
     .setName(CMD_NAME)
     .setDescription('Récupère les informations de durée de vie pour un jeu')
     .addStringOption((option) =>
-      option.setName('name')
-        .setDescription('Le nom du jeu')
-        .setRequired(true)
+      option.setName('name').setDescription('Le nom du jeu').setRequired(true),
     )
     .toJSON();
 }
 
 export const howlongtobeatResponse = {
   type: CMD_NAME,
-  callback: howlongtobeatCallback
+  callback: howlongtobeatCallback,
 };
 
 async function howlongtobeatCallback(interaction: CommandInteraction) {
@@ -37,12 +38,12 @@ async function howlongtobeatCallback(interaction: CommandInteraction) {
           .setColor('#0ee8da')
           .setTitle(details.name)
           .setThumbnail(details.imageUrl);
-        
+
         details.timeLabels.forEach(([code, label]) => {
           const value = details[code as HLTBLabelCode];
 
           embed.addField(label, `${value}h`, true);
-        })
+        });
 
         await interaction.reply({ embeds: [embed] });
       }

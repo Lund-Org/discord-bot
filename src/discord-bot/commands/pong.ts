@@ -1,5 +1,5 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 
 const CMD_NAME = 'pong' as const;
 
@@ -12,7 +12,7 @@ export function pongCmd() {
 
 export const pongResponse = {
   type: CMD_NAME,
-  callback: pongCallback
+  callback: pongCallback,
 };
 
 function pongCallback(interaction: CommandInteraction) {

@@ -3,7 +3,7 @@ interface DataObject {
 }
 
 class DataStore {
-  static datas: DataObject = {}
+  static datas: DataObject = {};
 
   /**
    * Set the data in the dataStore
@@ -11,7 +11,7 @@ class DataStore {
    * @param value The value to assign
    */
   static setData(key: string, value: string) {
-    DataStore.datas[key] = value
+    DataStore.datas[key] = value;
   }
 
   /**
@@ -19,8 +19,8 @@ class DataStore {
    * @param key The key to identify the data
    */
   static getData(key: string) {
-    return DataStore.datas[key]
+    return DataStore.datas[key];
   }
 }
 
-export default DataStore
+export default DataStore;

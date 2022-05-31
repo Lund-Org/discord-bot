@@ -15,12 +15,18 @@ const commands = [
   pollCmd,
   pongCmd,
   ppCmd,
-  shifumiCmd
+  shifumiCmd,
 ];
 
 export async function initCommands() {
   const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
 
-  await rest.put(Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, process.env.DISCORD_GUILD_ID), { body: commands });
+  await rest.put(
+    Routes.applicationGuildCommands(
+      process.env.DISCORD_CLIENT_ID,
+      process.env.DISCORD_GUILD_ID,
+    ),
+    { body: commands },
+  );
   console.log('Successfully registered application commands.');
 }

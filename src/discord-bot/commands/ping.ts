@@ -1,5 +1,5 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from '@discordjs/builders';
+import { CommandInteraction } from 'discord.js';
 
 const CMD_NAME = 'ping' as const;
 
@@ -12,7 +12,7 @@ export function pingCmd() {
 
 export const pingResponse = {
   type: CMD_NAME,
-  callback: pingCallback
+  callback: pingCallback,
 };
 
 function pingCallback(interaction: CommandInteraction) {

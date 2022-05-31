@@ -1,67 +1,76 @@
-import { CommandInteraction, Message, MessageAttachment } from "discord.js"
-import { Config } from "../../../database/entities/Config"
-import { getRepository } from "typeorm"
-import { Player } from '../../../database/entities/Player'
-import { addCardsToInventory, drawCards, generateDrawImage, userNotFound } from './helper'
-import { GachaConfigEnum } from "../../enums/GachaEnum"
+import { CommandInteraction, MessageAttachment } from 'discord.js';
+import { Config } from '../../../database/entities/Config';
+import { getRepository } from 'typeorm';
+import { Player } from '../../../database/entities/Player';
+import {
+  addCardsToInventory,
+  drawCards,
+  generateDrawImage,
+  userNotFound,
+} from './helper';
+import { GachaConfigEnum } from '../../enums/GachaEnum';
 
-type PriceConfig = { price: number }
+type PriceConfig = { price: number };
 
-async function securityChecks({ interaction, player }: {
+async function securityChecks({
+  interaction,
+  player,
+}: {
   interaction: CommandInteraction;
   player: Player;
-}): Promise<{ cardNumberToBuy: number;totalPrice: number }|null> {
+}): Promise<{ cardNumberToBuy: number; totalPrice: number } | null> {
   const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.PRICE }
-  })
-  const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig
-  const cardNumberToBuy = interaction.options.getNumber('quantity', true)
+    where: { name: GachaConfigEnum.PRICE },
+  });
+  const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig;
+  const cardNumberToBuy = interaction.options.getNumber('quantity', true);
 
   if (cardNumberToBuy < 1 || cardNumberToBuy > 6) {
-    await interaction.editReply('Erreur, le nombre de cartes achetable doit être entre 1 et 6')
-    return null
+    await interaction.editReply(
+      'Erreur, le nombre de cartes achetable doit être entre 1 et 6',
+    );
+    return null;
   }
 
   if (player.points < cardNumberToBuy * priceConfig.price) {
     await interaction.editReply(
       `Tu n'as pas assez de points (points actuels : ${
         player.points
-      }, points nécessaires : ${cardNumberToBuy * priceConfig.price})`
-    )
-    return null
+      }, points nécessaires : ${cardNumberToBuy * priceConfig.price})`,
+    );
+    return null;
   }
 
   return {
     cardNumberToBuy,
-    totalPrice: cardNumberToBuy * priceConfig.price
-  }
+    totalPrice: cardNumberToBuy * priceConfig.price,
+  };
 }
 
 export const buy = async (interaction: CommandInteraction) => {
   const player = await userNotFound({
-    interaction, relations: [
-      'inventories',
-      'inventories.cardType',
-    ] })
+    interaction,
+    relations: ['inventories', 'inventories.cardType'],
+  });
 
   if (!player) {
-    return
+    return;
   }
 
-  await interaction.deferReply()
-  const cardToDraw = await securityChecks({ interaction, player })
+  await interaction.deferReply();
+  const cardToDraw = await securityChecks({ interaction, player });
 
   if (cardToDraw === null) {
-    return
+    return;
   }
 
-  const cards = await drawCards(cardToDraw.cardNumberToBuy)
-  const canvas = await generateDrawImage(interaction.user.username, cards)
-  const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png')
+  const cards = await drawCards(cardToDraw.cardNumberToBuy);
+  const canvas = await generateDrawImage(interaction.user.username, cards);
+  const attachment = new MessageAttachment(canvas.toBuffer(), 'cards.png');
 
-  await addCardsToInventory(player, cards, cardToDraw.totalPrice)
+  await addCardsToInventory(player, cards, cardToDraw.totalPrice);
   return interaction.editReply({
     content: `Les ${cardToDraw.cardNumberToBuy} cartes que tu as acheté`,
-    files: [attachment]
-  })
-}
+    files: [attachment],
+  });
+};

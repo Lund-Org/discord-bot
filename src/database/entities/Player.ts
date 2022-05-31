@@ -1,51 +1,65 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, AfterLoad, ManyToMany, JoinTable, getManager } from "typeorm"
-import { Gift } from "./Gift"
-import { PlayerInventory } from "./PlayerInventory"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  AfterLoad,
+  ManyToMany,
+  getManager,
+} from 'typeorm';
+import { Gift } from './Gift';
+import { PlayerInventory } from './PlayerInventory';
 
 @Entity()
 export class Player {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column({ nullable: false, type: 'text' })
-  username: string
+  username: string;
 
   @Column({ unique: true, nullable: false })
-  discord_id: string
+  discord_id: string;
 
   @Column({ unique: true, nullable: true, default: null })
-  twitch_username: string
+  twitch_username: string;
 
   @Column()
-  points: number
+  points: number;
 
   @Column({ default: () => 'NOW()', nullable: false })
-  lastMessageDate: Date
+  lastMessageDate: Date;
 
   @Column({ default: null, nullable: true })
-  lastDailyDraw: Date|null
+  lastDailyDraw: Date | null;
 
   @Column({ default: () => 'NOW()', nullable: false })
-  joinDate: Date
+  joinDate: Date;
 
-  @OneToMany(() => PlayerInventory, inventory => inventory.player)
-  inventories: PlayerInventory[]
+  @OneToMany(() => PlayerInventory, (inventory) => inventory.player)
+  inventories: PlayerInventory[];
 
-  @ManyToMany(() => Gift, gift => gift.players)
-  gifts: Gift[]
+  @ManyToMany(() => Gift, (gift) => gift.players)
+  gifts: Gift[];
 
   @AfterLoad()
   sortAttributes() {
     if (this?.inventories?.length) {
-      this.inventories.sort((a, b) => (a.cardType?.id < b.cardType?.id ? -1 : a.cardType?.id === b.cardType?.id ? 0 : 1))
+      this.inventories.sort((a, b) =>
+        a.cardType?.id < b.cardType?.id
+          ? -1
+          : a.cardType?.id === b.cardType?.id
+          ? 0
+          : 1,
+      );
     }
   }
 
   async saveNewGift(gift: Gift) {
     await getManager().query(
       'INSERT INTO gifts_players(`gift`, `player`) VALUES(?, ?)',
-      [gift.id, this.id]
-    )
+      [gift.id, this.id],
+    );
   }
 
   async addPoints(points: number) {
@@ -57,7 +71,7 @@ export class Player {
       `UPDATE player
         SET points = points + ?
         WHERE id = ?`,
-      [points, this.id]
-    )
+      [points, this.id],
+    );
   }
 }

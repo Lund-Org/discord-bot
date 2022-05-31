@@ -1,46 +1,53 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
-import { PlayerInventory } from "./PlayerInventory"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { PlayerInventory } from './PlayerInventory';
 
 @Entity()
 export class CardType {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column({ unique: true, nullable: false })
-  name: string
+  name: string;
 
   @Column({ nullable: false })
-  description: string
+  description: string;
 
   @Column({ nullable: false })
-  lore: string
+  lore: string;
 
   @Column()
-  level: number
+  level: number;
 
   @Column({ unique: true, nullable: false })
-  imageName: string
+  imageName: string;
 
   @Column({ default: false })
-  isFusion: boolean
+  isFusion: boolean;
 
-  @OneToMany(() => PlayerInventory, inventory => inventory.cardType)
-  playerInventories: PlayerInventory[]
+  @OneToMany(() => PlayerInventory, (inventory) => inventory.cardType)
+  playerInventories: PlayerInventory[];
 
-  @ManyToMany(() => CardType, cardType => cardType.possibleFusions)
+  @ManyToMany(() => CardType, (cardType) => cardType.possibleFusions)
   @JoinTable({
-    name: "fusion_dependencies",
+    name: 'fusion_dependencies',
     joinColumn: {
-      name: "fusion",
-      referencedColumnName: "id"
+      name: 'fusion',
+      referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: "dependency",
-      referencedColumnName: "id"
-    }
+      name: 'dependency',
+      referencedColumnName: 'id',
+    },
   })
-  fusionDependencies: CardType[]
+  fusionDependencies: CardType[];
 
-  @ManyToMany(() => CardType, cardType => cardType.fusionDependencies)
-  possibleFusions: CardType[]
+  @ManyToMany(() => CardType, (cardType) => cardType.fusionDependencies)
+  possibleFusions: CardType[];
 }

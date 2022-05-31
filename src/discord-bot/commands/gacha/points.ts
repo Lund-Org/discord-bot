@@ -1,12 +1,12 @@
-import { Message } from "discord.js"
-import { userNotFound } from './helper'
+import { Message } from 'discord.js';
+import { userNotFound } from './helper';
 
 export const points = async ({ msg }: { msg: Message }) => {
-  const player = await userNotFound({ msg })
+  const player = await userNotFound({ msg });
 
   if (!player) {
-    return
+    return;
   }
 
-  msg.channel.send(`Tu possèdes actuellement ${player.points} points`)
-}
+  msg.channel.send(`Tu possèdes actuellement ${player.points} points`);
+};

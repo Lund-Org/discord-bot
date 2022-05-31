@@ -1,7 +1,3 @@
-import ChannelInitializer from './ChannelInitializer'
-import CommandPrefixInitializer from './CommandPrefixInitializer'
+import ChannelInitializer from './ChannelInitializer';
 
-export default [
-  ChannelInitializer,
-  CommandPrefixInitializer
-]
+export default [ChannelInitializer];

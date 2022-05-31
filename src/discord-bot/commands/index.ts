@@ -6,16 +6,15 @@ import { pongResponse } from './pong';
 import { ppResponse } from './pp';
 import { shifumiResponse } from './shifumi';
 
-export const commandsResponses = [,
+export const commandsResponses = [
+  ,
   gachaResponse,
   googleResponse,
   joinResponse,
   pingResponse,
   pongResponse,
   ppResponse,
-  shifumiResponse
-]
+  shifumiResponse,
+];
 
-export const menusCallback = [
-  gachaMenuResponse
-]
+export const menusCallback = [gachaMenuResponse];
