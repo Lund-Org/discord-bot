@@ -1,21 +1,21 @@
-import { getUserRanks } from './handlers/users.ranks'
-import { getUserProfile } from './handlers/users.profile'
-import { getUserRank } from './handlers/users.rank'
+import { getUserRanks } from './handlers/users.ranks';
+import { getUserProfile } from './handlers/users.profile';
+import { getUserRank } from './handlers/users.rank';
 
 export const routes: mb.Route[] = [
   {
     methods: ['get'],
     url: '/api/ranks',
-    handler: getUserRanks
+    handler: getUserRanks,
   },
   {
     methods: ['get'],
     url: '/api/ranks/:id',
-    handler: getUserRank
+    handler: getUserRank,
   },
   {
     methods: ['get'],
     url: '/api/profile/:id',
-    handler: getUserProfile
-  }
-]
+    handler: getUserProfile,
+  },
+];

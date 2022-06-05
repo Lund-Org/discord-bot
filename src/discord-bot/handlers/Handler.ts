@@ -1,9 +1,9 @@
-import { Client, Message } from 'discord.js'
-import messageHelper from '../helpers/messageHelper.js'
+import { Client, Message } from 'discord.js';
+import messageHelper from '../helpers/messageHelper.js';
 
-export default abstract class Handler {
+export abstract class Handler {
   validate(client: Client, msg: Message): Promise<boolean> {
-    return messageHelper.ignoreSelfMessage(client, msg)
+    return messageHelper.ignoreSelfMessage(client, msg);
   }
-  abstract process(client: Client, msg: Message): Promise<boolean>
+  abstract process(client: Client, msg: Message): Promise<boolean>;
 }

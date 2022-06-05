@@ -1,34 +1,40 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm"
-import { Player } from "./Player"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Player } from './Player';
 
 @Entity()
 export class Gift {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
-  @Column({ type: "datetime", nullable: false })
-  beginning_datetime: Date
+  @Column({ type: 'datetime', nullable: false })
+  beginning_datetime: Date;
 
-  @Column({ type: "datetime", nullable: false })
-  end_datetime: Date
+  @Column({ type: 'datetime', nullable: false })
+  end_datetime: Date;
 
   @Column({ unique: true, nullable: false })
-  code: string
+  code: string;
 
   @Column({ type: 'json', nullable: false })
-  bonus: Record<string, number>[]
+  bonus: Record<string, number>[];
 
-  @ManyToMany(() => Player, player => player.gifts)
+  @ManyToMany(() => Player, (player: Player) => player.gifts)
   @JoinTable({
-    name: "gifts_players",
+    name: 'gifts_players',
     joinColumn: {
-      name: "gift",
-      referencedColumnName: "id"
+      name: 'gift',
+      referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: "player",
-      referencedColumnName: "id"
-    }
+      name: 'player',
+      referencedColumnName: 'id',
+    },
   })
-  players: Player[]
+  players: Player[];
 }

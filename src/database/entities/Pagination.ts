@@ -1,16 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Pagination {
   @PrimaryGeneratedColumn()
-  id: number
+  id: number;
 
   @Column()
-  page: number
+  page: number;
 
   @Column({ unique: true, nullable: false })
-  discordMessage_id: string
+  discordMessage_id: string;
 
   @Column({ nullable: false })
-  discordUser_id: string
+  discordUser_id: string;
 }

@@ -1,9 +1,9 @@
-import { postTwitchToken } from './handlers/twitch.token'
+import { postTwitchToken } from './handlers/twitch.token';
 
 export const routes: mb.Route[] = [
   {
     methods: ['post'],
     url: '/twitch-token',
-    handler: postTwitchToken
-  }
-]
+    handler: postTwitchToken,
+  },
+];

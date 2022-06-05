@@ -1,7 +1,7 @@
 enum ShifumiEnum {
   PIERRE = 'pierre',
   FEUILLE = 'feuille',
-  CISEAUX = 'ciseaux'
+  CISEAUX = 'ciseaux',
 }
 
-export default ShifumiEnum
+export default ShifumiEnum;

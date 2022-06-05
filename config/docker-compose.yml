@@ -8,5 +8,5 @@ services:
       - "3306:3306"
     container_name: discord_database
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: discord_database
+      MYSQL_ROOT_PASSWORD: root

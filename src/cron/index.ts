@@ -1,63 +1,73 @@
-import { CronJob } from 'cron'
-import { Birthday } from '../database/entities/Birthday'
-import { getRepository } from 'typeorm'
-import { Client, TextChannel } from 'discord.js'
-import { giftPointsForBirthday, givenPointsForBirthday } from '../common/birthday'
+import { CronJob } from 'cron';
+import { Birthday } from '../database/entities/Birthday';
+import { Client, TextChannel } from 'discord.js';
+import {
+  giftPointsForBirthday,
+  givenPointsForBirthday,
+} from '../common/birthday';
+import DataStore from '../common/dataStore';
 
 function setupBirthdayCron(discordClient: Client) {
   const job = new CronJob(
     '0 0 0 * * *',
     async () => {
-      const date = new Date()
+      const date = new Date();
 
       try {
         // get the birthday entities
-        const birthdays = await getRepository(Birthday)
+        const birthdays = await DataStore.getDB()
+          .getRepository(Birthday)
           .find({
-            birthday_day: date.getDate(),
-            birthday_month: date.getMonth() + 1
-          })
+            where: {
+              birthday_day: date.getDate(),
+              birthday_month: date.getMonth() + 1,
+            },
+          });
 
         for (const birthday of birthdays) {
-          const guilds = discordClient.guilds.cache
+          const guilds = discordClient.guilds.cache;
 
           // find the member in the guilds
           for (const [_, guild] of guilds) {
-            const target = guild.members.cache.find((member) => member.id === birthday.discord_id)
+            const target = await guild.members
+              .fetch(birthday.discord_id)
+              .catch(() => null);
 
             if (target) {
-              const generalChannel = guild.channels.cache.find(
-                (channel) => channel.id === process.env.BIRTHDAY_CHANNEL_ID
-              )
+              const notifChannel = await guild.channels
+                .fetch(process.env.BIRTHDAY_CHANNEL_ID || '')
+                .catch(() => null);
 
               // get the general channel
-              if (generalChannel && generalChannel.isText()) {
-                const hasEarnPoints = await giftPointsForBirthday(target.id)
-                console.log(`Birthday wished for ${target.id}`)
+              if (notifChannel && notifChannel.isText()) {
+                const hasEarnPoints = await giftPointsForBirthday(target.id);
 
                 if (hasEarnPoints) {
-                  (generalChannel as TextChannel).send(`Bon anniversaire ${target.toString()} 🎂. En tant que joueur de gacha, tu as gagné ${givenPointsForBirthday} points :)`)
+                  (notifChannel as TextChannel).send(
+                    `Bon anniversaire ${target.toString()} 🎂. En tant que joueur de gacha, tu as gagné ${givenPointsForBirthday} points :)`,
+                  );
                 } else {
-                  (generalChannel as TextChannel).send(`Bon anniversaire ${target.toString()} 🎂`)
+                  (notifChannel as TextChannel).send(
+                    `Bon anniversaire ${target.toString()} 🎂`,
+                  );
                 }
               }
             }
           }
         }
       } catch (e) {
-        console.log('Cron error :')
-        console.log(e)
+        console.log('Cron error :');
+        console.log(e);
       }
     },
     null,
     true,
-    'Europe/Paris'
-  )
+    'Europe/Paris',
+  );
 
-  job.start()
+  job.start();
 }
 
-
 export function initCron(discordClient: Client) {
-  setupBirthdayCron(discordClient)
+  setupBirthdayCron(discordClient);
 }
