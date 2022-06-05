@@ -10,7 +10,7 @@ export default {
    * @param msg The message to react with
    */
   ignoreSelfMessage(client: Client, msg: Message): Promise<boolean> {
-    return Promise.resolve(msg.author.id !== client.user?.id);
+    return Promise.resolve(msg.author?.id !== client.user?.id);
   },
   /**
    * Check if a message is an url
