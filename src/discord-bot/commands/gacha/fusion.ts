@@ -49,6 +49,7 @@ export const fusion = async (interaction: SelectMenuInteraction<CacheType>) => {
     return;
   }
 
+  await interaction.deferReply();
   const cardToCreateId = parseInt(interaction.values[0], 10);
   const cardToCreate = await DataStore.getDB()
     .getRepository(CardType)
@@ -58,10 +59,10 @@ export const fusion = async (interaction: SelectMenuInteraction<CacheType>) => {
     });
 
   if (!cardToCreate) {
-    return interaction.reply("La carte n'existe pas");
+    return interaction.editReply("La carte n'existe pas");
   }
   if (!cardToCreate.isFusion) {
-    return interaction.reply(
+    return interaction.editReply(
       "La carte que tu veux créer n'est pas une carte fusion",
     );
   }
@@ -86,9 +87,9 @@ export const fusion = async (interaction: SelectMenuInteraction<CacheType>) => {
 
   if (missingCards.length === 0) {
     await createFusionCard(player, cardInventoriesRequired, cardToCreate);
-    return interaction.reply('Carte fusion créée !');
+    return interaction.editReply('Carte fusion créée !');
   } else {
-    return interaction.reply(
+    return interaction.editReply(
       `Tu ne possèdes pas tous les réactifs nécessaires. Cartes manquantes : ${missingCards
         .map((id) => `#${id}`)
         .join(', ')}`,

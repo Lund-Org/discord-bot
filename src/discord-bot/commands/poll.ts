@@ -65,7 +65,6 @@ async function pollCallback(interaction: CommandInteraction<CacheType>) {
   const label = interaction.options.getString('label', true);
   const choices = Array.from(Array(10).keys())
     .map((n) => {
-      console.log('n', n);
       return interaction.options.getString(
         `option${n + 1}`,
         n < 2 ? true : false,

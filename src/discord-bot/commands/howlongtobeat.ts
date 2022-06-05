@@ -49,7 +49,7 @@ async function howlongtobeatCallback(
           }
         });
 
-        await interaction.reply({ embeds: [embed] });
+        return interaction.reply({ embeds: [embed] });
       }
     }
 
