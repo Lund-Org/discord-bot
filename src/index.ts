@@ -2,16 +2,22 @@ import 'reflect-metadata';
 import { initDiscord } from './discord-bot';
 import { initServer } from './express/server';
 // import { initTwitchPubSub } from './twitch-pubsub'
-import { createConnection, getConnectionOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { initCron } from './cron';
 import { Client } from 'discord.js';
 import dotenv from 'dotenv';
+import DataStore from './common/dataStore';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 dotenv.config();
 
-getConnectionOptions()
-  .then((config) => {
-    return createConnection(config);
+const ormConfig = readFileSync(join(__dirname, '../ormconfig.json')).toString();
+const db = new DataSource(JSON.parse(ormConfig));
+
+db.initialize()
+  .then(() => {
+    return DataStore.setDB(db);
   })
   .then(() => {
     const bootstrapPromises = [];

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, Message } from 'discord.js';
+import { CacheType, CommandInteraction, Message } from 'discord.js';
 
 const CMD_NAME = 'poll' as const;
 const reactionEmojis = [
@@ -15,61 +15,63 @@ const reactionEmojis = [
   '🔟',
 ] as const;
 
-export function pollCmd() {
-  return new SlashCommandBuilder()
-    .setName(CMD_NAME)
-    .setDescription('Crée un sondage')
-    .addStringOption((option) =>
-      option
-        .setName('label')
-        .setDescription('Intitulé du sondage')
-        .setRequired(true),
-    )
-    .addStringOption((option) =>
-      option.setName('option1').setDescription('Choix 1').setRequired(true),
-    )
-    .addStringOption((option) =>
-      option.setName('option2').setDescription('Choix 2').setRequired(true),
-    )
-    .addStringOption((option) =>
-      option.setName('option3').setDescription('Choix 3').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option4').setDescription('Choix 4').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option5').setDescription('Choix 5').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option6').setDescription('Choix 6').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option7').setDescription('Choix 7').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option8').setDescription('Choix 8').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option9').setDescription('Choix 9').setRequired(false),
-    )
-    .addStringOption((option) =>
-      option.setName('option10').setDescription('Choix 10').setRequired(false),
-    )
-    .toJSON();
-}
+export const pollCmd = new SlashCommandBuilder()
+  .setName(CMD_NAME)
+  .setDescription('Crée un sondage')
+  .addStringOption((option) =>
+    option
+      .setName('label')
+      .setDescription('Intitulé du sondage')
+      .setRequired(true),
+  )
+  .addStringOption((option) =>
+    option.setName('option1').setDescription('Choix 1').setRequired(true),
+  )
+  .addStringOption((option) =>
+    option.setName('option2').setDescription('Choix 2').setRequired(true),
+  )
+  .addStringOption((option) =>
+    option.setName('option3').setDescription('Choix 3').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option4').setDescription('Choix 4').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option5').setDescription('Choix 5').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option6').setDescription('Choix 6').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option7').setDescription('Choix 7').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option8').setDescription('Choix 8').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option9').setDescription('Choix 9').setRequired(false),
+  )
+  .addStringOption((option) =>
+    option.setName('option10').setDescription('Choix 10').setRequired(false),
+  )
+  .toJSON();
 
 export const pollResponse = {
   type: CMD_NAME,
   callback: pollCallback,
 };
 
-async function pollCallback(interaction: CommandInteraction) {
-  const label = interaction.options.getString('query', true);
-  const choices = Array.from(Array(10))
-    .map((n) =>
-      interaction.options.getString(`option${n + 1}`, n < 2 ? true : false),
-    )
-    .filter(Boolean);
+async function pollCallback(interaction: CommandInteraction<CacheType>) {
+  const label = interaction.options.getString('label', true);
+  const choices = Array.from(Array(10).keys())
+    .map((n) => {
+      console.log('n', n);
+      return interaction.options.getString(
+        `option${n + 1}`,
+        n < 2 ? true : false,
+      );
+    })
+    .filter(Boolean) as string[];
   const emojis: Array<string> = choices.map(
     (_, index): string => reactionEmojis[index],
   );

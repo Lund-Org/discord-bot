@@ -4,20 +4,20 @@ import {
   MessageSelectMenu,
   MessageSelectOptionData,
   SelectMenuInteraction,
+  CacheType,
 } from 'discord.js';
 import { CardType } from '../../../database/entities/CardType';
 import { Player } from '../../../database/entities/Player';
-import { getManager, getRepository } from 'typeorm';
 import { userNotFound } from './helper';
 import { PlayerInventory } from '../../../database/entities/PlayerInventory';
 import { getCardsToFusion } from '../../../common/profile';
+import DataStore from '../../../common/dataStore';
 
 async function createFusionCard(
   player: Player,
   cardsRequired: PlayerInventory[],
   fusionCard: CardType,
 ) {
-  const entityManager = getManager();
   let fusionInventory = player.inventories.find(
     (x) => x.cardType.id === fusionCard.id && x.type === 'basic',
   );
@@ -36,10 +36,10 @@ async function createFusionCard(
     fusionInventory.cardType = fusionCard;
   }
 
-  await entityManager.save([...cardsRequired, fusionInventory]);
+  await DataStore.getDB().manager.save([...cardsRequired, fusionInventory]);
 }
 
-export const fusion = async (interaction: SelectMenuInteraction) => {
+export const fusion = async (interaction: SelectMenuInteraction<CacheType>) => {
   const player = await userNotFound({
     interaction,
     relations: ['inventories', 'inventories.cardType'],
@@ -50,10 +50,12 @@ export const fusion = async (interaction: SelectMenuInteraction) => {
   }
 
   const cardToCreateId = parseInt(interaction.values[0], 10);
-  const cardToCreate = await getRepository(CardType).findOne({
-    where: { id: cardToCreateId },
-    relations: ['fusionDependencies'],
-  });
+  const cardToCreate = await DataStore.getDB()
+    .getRepository(CardType)
+    .findOne({
+      where: { id: cardToCreateId },
+      relations: ['fusionDependencies'],
+    });
 
   if (!cardToCreate) {
     return interaction.reply("La carte n'existe pas");
@@ -94,7 +96,7 @@ export const fusion = async (interaction: SelectMenuInteraction) => {
   }
 };
 
-export async function fusionMenu(interaction: CommandInteraction) {
+export async function fusionMenu(interaction: CommandInteraction<CacheType>) {
   const player = await userNotFound({
     interaction,
   });
@@ -110,7 +112,7 @@ export async function fusionMenu(interaction: CommandInteraction) {
     return interaction.editReply('Tu ne peux faire aucune fusion actuellement');
   }
 
-  const row = new MessageActionRow().addComponents(
+  const row = new MessageActionRow<MessageSelectMenu>().addComponents(
     new MessageSelectMenu()
       .setCustomId('fusion')
       .setPlaceholder('Selectionner')

@@ -386,9 +386,7 @@ const cardsToAdd = [
 export class NewBunchOfCards1647106697860 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const fusions = [];
-    for (let i = 0; i < cardsToAdd.length; ++i) {
-      const card = cardsToAdd[i];
-
+    for (const card of cardsToAdd) {
       if (card.isFusion) {
         fusions.push(card);
       }
@@ -398,16 +396,16 @@ export class NewBunchOfCards1647106697860 implements MigrationInterface {
       );
     }
 
-    for (let i = 0; i < fusions.length; ++i) {
-      const fusionCard = fusions[i];
-
-      await Promise.all(
-        fusionCard.fusionDeps.map((depId) =>
-          queryRunner.query(
-            `INSERT INTO fusion_dependencies(fusion, dependency) VALUES(${fusionCard.id}, ${depId});`,
+    for (const fusionCard of fusions) {
+      if (fusionCard.fusionDeps) {
+        await Promise.all(
+          fusionCard?.fusionDeps.map((depId) =>
+            queryRunner.query(
+              `INSERT INTO fusion_dependencies(fusion, dependency) VALUES(${fusionCard.id}, ${depId});`,
+            ),
           ),
-        ),
-      );
+        );
+      }
     }
   }
 

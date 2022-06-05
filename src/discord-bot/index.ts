@@ -1,7 +1,4 @@
 import { Client, Intents, Message, MessageReaction, User } from 'discord.js';
-import { getRepository } from 'typeorm';
-
-import initializers from './initializers';
 import CreateHandlerClasses from './handlers/createHandlers';
 import UpdateHandlerClasses from './handlers/updateHandlers';
 import { commandsResponses, menusCallback } from './commands';
@@ -9,11 +6,13 @@ import { Handler } from './handlers/Handler';
 import { initCommands } from './commands/initializer';
 import { manageGachaPagination } from './helpers/discordEvent';
 import { Pagination } from '../database/entities/Pagination';
+import DataStore from '../common/dataStore';
+import initializers from './initializers';
 
 export const initDiscord = (): Promise<Client> => {
   return initCommands().then(() => {
     const client = new Client({
-      partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
+      partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'GUILD_MEMBER', 'USER'],
       intents: [
         Intents.FLAGS.GUILDS,
         Intents.FLAGS.GUILD_MEMBERS,
@@ -31,7 +30,7 @@ export const initDiscord = (): Promise<Client> => {
     });
 
     client.on('ready', () => {
-      console.log(`Logged in as ${client.user.tag} !`);
+      console.log(`Logged in as ${client.user?.tag} !`);
       initializers.forEach((initializer: (client: Client) => void) =>
         initializer(client),
       );
@@ -89,12 +88,14 @@ export const initDiscord = (): Promise<Client> => {
         return;
       }
 
-      const matchingPagination = await getRepository(Pagination).findOne({
-        where: {
-          discordUser_id: user.id,
-          discordMessage_id: fullReaction.message.id,
-        },
-      });
+      const matchingPagination = await DataStore.getDB()
+        .getRepository(Pagination)
+        .findOne({
+          where: {
+            discordUser_id: user.id,
+            discordMessage_id: fullReaction.message.id,
+          },
+        });
 
       if (matchingPagination) {
         await manageGachaPagination(

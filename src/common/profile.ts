@@ -1,11 +1,13 @@
+import { MoreThanOrEqual } from 'typeorm';
 import { CardType } from '../database/entities/CardType';
-import { getRepository } from 'typeorm';
 import { Player } from '../database/entities/Player';
 import { PlayerInventory } from '../database/entities/PlayerInventory';
+import DataStore from './dataStore';
 
 export async function getProfile(discord_id: string): Promise<Player | null> {
   try {
-    let player = await getRepository(Player)
+    let player = await DataStore.getDB()
+      .getRepository(Player)
       .createQueryBuilder('player')
       .leftJoinAndSelect('player.inventories', 'inventories')
       .leftJoinAndSelect('inventories.cardType', 'cardType')
@@ -15,8 +17,13 @@ export async function getProfile(discord_id: string): Promise<Player | null> {
       .getOne();
 
     if (!player) {
-      player = await getRepository(Player).findOne({ discord_id });
-      player.inventories = [];
+      player = await DataStore.getDB()
+        .getRepository(Player)
+        .findOne({ where: { discord_id } });
+
+      if (player) {
+        player.inventories = [];
+      }
     }
 
     return player;
@@ -30,15 +37,20 @@ export async function getCardsToGold(
   discord_id: string,
 ): Promise<PlayerInventory[]> {
   try {
-    return getRepository(PlayerInventory)
-      .createQueryBuilder('player_inventories')
-      .leftJoinAndSelect('player_inventories.player', 'player')
-      .leftJoinAndSelect('player_inventories.cardType', 'cardType')
-      .where('player.discord_id = :discord_id', { discord_id })
-      .andWhere('player_inventories.total >= 5')
-      .andWhere('player_inventories.type = "basic"')
-      .orderBy('cardType.id', 'ASC')
-      .getMany();
+    return DataStore.getDB()
+      .getRepository(PlayerInventory)
+      .find({
+        relations: {
+          player: true,
+          cardType: true,
+        },
+        where: {
+          player: { discord_id },
+          type: 'basic',
+          total: MoreThanOrEqual(5),
+        },
+        order: { cardType: { id: 'ASC' } },
+      });
   } catch (e) {
     console.log(e);
     return [];
@@ -48,23 +60,31 @@ export async function getCardsToFusion(
   discord_id: string,
 ): Promise<CardType[]> {
   try {
-    const fusionCards = await getRepository(CardType).find({
-      where: { isFusion: true },
-      relations: ['fusion_dependencies'],
-    });
-    const inventoryCards = await getRepository(PlayerInventory)
-      .createQueryBuilder('player_inventories')
-      .leftJoinAndSelect('player_inventories.player', 'player')
-      .leftJoinAndSelect('player_inventories.cardType', 'cardType')
-      .where('player.discord_id = :discord_id', { discord_id })
-      .andWhere('player_inventories.type = "basic"')
-      .getMany();
+    const fusionCards = await DataStore.getDB()
+      .getRepository(CardType)
+      .find({
+        where: { isFusion: true },
+        relations: ['fusionDependencies'],
+      });
+    const inventoryCards = await DataStore.getDB()
+      .getRepository(PlayerInventory)
+      .find({
+        relations: {
+          player: true,
+          cardType: true,
+        },
+        where: {
+          player: { discord_id },
+          type: 'basic',
+        },
+      });
 
     return fusionCards.reduce((accumulator, fusionCard) => {
       const depsIds = fusionCard.fusionDependencies.map((f) => f.id);
       const hasAllDeps = depsIds.every((depId) => {
         return inventoryCards.find(
-          (inventoryCard) => inventoryCard.id === depId,
+          (inventoryCard) =>
+            inventoryCard.cardType.id === depId && inventoryCard.total > 0,
         );
       });
 

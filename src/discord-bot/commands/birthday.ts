@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { CacheType, CommandInteraction } from 'discord.js';
+import DataStore from '../../common/dataStore';
 import { Birthday } from '../../database/entities/Birthday';
-import { getRepository } from 'typeorm';
 
 const months = [
   'Janvier',
@@ -20,62 +20,46 @@ const months = [
 
 const CMD_NAME = 'birthday' as const;
 
-export function shifumiCmd() {
-  return new SlashCommandBuilder()
-    .setName(CMD_NAME)
-    .setDescription("Enregistre sa date d'anniversaire")
-    .addNumberOption((option) => {
-      const opt = option
-        .setName('day')
-        .setDescription('Le jour de naissance')
-        .setRequired(true);
-      const choices = Array.from({ length: 31 }, (_, i) => i + 1).map((n) => ({
-        name: String(n),
-        value: n,
-      }));
+export const birthdayCmd = new SlashCommandBuilder()
+  .setName(CMD_NAME)
+  .setDescription("Enregistre sa date d'anniversaire")
+  .addNumberOption((option) =>
+    option
+      .setName('day')
+      .setDescription('Le jour de naissance')
+      .setRequired(true),
+  )
+  .addNumberOption((option) => {
+    const opt = option
+      .setName('month')
+      .setDescription('Le mois de naissance')
+      .setRequired(true);
+    const choices = Array.from(Array(12).keys()).map((n) => ({
+      name: months[n],
+      value: n + 1,
+    }));
 
-      return opt.addChoices(...choices);
-    })
-    .addNumberOption((option) => {
-      const opt = option
-        .setName('month')
-        .setDescription('Le mois de naissance')
-        .setRequired(true);
-      const choices = Array.from(Array(12).keys()).map((n) => ({
-        name: months[n],
-        value: n,
-      }));
-
-      return opt.addChoices(...choices);
-    })
-    .addNumberOption((option) => {
-      const opt = option
-        .setName('year')
-        .setDescription("L'année de naissance")
-        .setRequired(true);
-      const currentYear = new Date().getFullYear();
-      const choices = Array.from({ length: 80 }, (_, i) => currentYear - i).map(
-        (n) => ({
-          name: String(n),
-          value: n,
-        }),
-      );
-
-      return opt.addChoices(...choices);
-    })
-    .toJSON();
-}
+    return opt.addChoices(...choices);
+  })
+  .addNumberOption((option) =>
+    option
+      .setName('year')
+      .setDescription("L'année de naissance")
+      .setRequired(true),
+  )
+  .toJSON();
 
 export const birthdayResponse = {
   type: CMD_NAME,
   callback: birthdayCallback,
 };
 
-async function birthdayCallback(interaction: CommandInteraction) {
+async function birthdayCallback(interaction: CommandInteraction<CacheType>) {
   const userId = interaction.user.id;
   const birthday =
-    (await getRepository(Birthday).findOne({ discord_id: userId })) ||
-    new Birthday();
+    (await DataStore.getDB()
+      .getRepository(Birthday)
+      .findOne({ where: { discord_id: userId } })) || new Birthday();
   const newBirthday = !birthday.discord_id;
   const day = interaction.options.getNumber('day', true);
   const month = interaction.options.getNumber('month', true);
@@ -93,7 +77,7 @@ async function birthdayCallback(interaction: CommandInteraction) {
   }
 
   try {
-    await getRepository(Birthday).save(birthday);
+    await DataStore.getDB().getRepository(Birthday).save(birthday);
     interaction.reply(`Anniversaire enregistré !`);
     if (newBirthday) {
       await this.backportThisYearPoints(day, month, userId);

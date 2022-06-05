@@ -31,10 +31,13 @@ export class CardType {
   @Column({ default: false })
   isFusion: boolean;
 
-  @OneToMany(() => PlayerInventory, (inventory) => inventory.cardType)
+  @OneToMany(
+    () => PlayerInventory,
+    (inventory: PlayerInventory) => inventory.cardType,
+  )
   playerInventories: PlayerInventory[];
 
-  @ManyToMany(() => CardType, (cardType) => cardType.possibleFusions)
+  @ManyToMany(() => CardType, (cardType: CardType) => cardType.possibleFusions)
   @JoinTable({
     name: 'fusion_dependencies',
     joinColumn: {
@@ -48,6 +51,9 @@ export class CardType {
   })
   fusionDependencies: CardType[];
 
-  @ManyToMany(() => CardType, (cardType) => cardType.fusionDependencies)
+  @ManyToMany(
+    () => CardType,
+    (cardType: CardType) => cardType.fusionDependencies,
+  )
   possibleFusions: CardType[];
 }

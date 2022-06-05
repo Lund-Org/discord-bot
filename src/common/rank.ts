@@ -1,4 +1,4 @@
-import { getManager, getRepository } from 'typeorm';
+import DataStore from './dataStore';
 import { Config } from '../database/entities/Config';
 import { GachaConfigEnum } from '../discord-bot/enums/GachaEnum';
 
@@ -23,7 +23,7 @@ const goldXP = 500;
 export async function getGlobalRanking(
   userToFilter: number[] = [],
 ): Promise<RankByUser[]> {
-  const xpByUsers = (await getManager().query(`
+  const xpByUsers = (await DataStore.getDB().manager.query(`
     SELECT
       t1.playerId,
       SUM(t1.price * t1.level) AS currentXP,
@@ -48,10 +48,12 @@ export async function getGlobalRanking(
     GROUP BY playerId
     ORDER BY currentXP DESC
   `)) as XpByUser[];
-  const configLevelsJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.LEVELS },
-  });
-  const levelConfig: Record<string, number> = configLevelsJSON.value as Record<
+  const configLevelsJSON = await DataStore.getDB()
+    .getRepository(Config)
+    .findOne({
+      where: { name: GachaConfigEnum.LEVELS },
+    });
+  const levelConfig: Record<string, number> = configLevelsJSON?.value as Record<
     string,
     number
   >;
@@ -74,6 +76,14 @@ export async function getGlobalRanking(
       { currentLevel: 1, xpNextLevel: 0 },
     );
 
-    return { ...xpByUser, level };
+    return {
+      ...xpByUser,
+      level,
+      lastMessageDate: new Date(xpByUser.lastMessageDate),
+      lastDailyDraw: xpByUser.lastDailyDraw
+        ? new Date(xpByUser.lastDailyDraw)
+        : null,
+      joinDate: new Date(xpByUser.joinDate),
+    };
   });
 }

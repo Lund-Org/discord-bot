@@ -1,5 +1,5 @@
-import { CommandInteraction, MessageAttachment } from 'discord.js';
-import { getRepository } from 'typeorm';
+import { CacheType, CommandInteraction, MessageAttachment } from 'discord.js';
+import DataStore from '../../../common/dataStore';
 import { Gift } from '../../../database/entities/Gift';
 import {
   addCardsToInventory,
@@ -52,15 +52,20 @@ async function getGoldCards(numberOfCards: number | undefined) {
 }
 
 /** Command */
-export const gift = async (interaction: CommandInteraction) => {
+export const gift = async (interaction: CommandInteraction<CacheType>) => {
   const code = interaction.options.getString('code', true);
   const player = await userNotFound({
     interaction,
     relations: ['gifts', 'inventories', 'inventories.cardType'],
   });
 
+  if (!player) {
+    return;
+  }
+
   await interaction.deferReply();
-  const foundGift = await getRepository(Gift)
+  const foundGift = await DataStore.getDB()
+    .getRepository(Gift)
     .createQueryBuilder('gift')
     .where('code = :code', { code })
     .andWhere('beginning_datetime < :beginDateTime', {
@@ -75,7 +80,8 @@ export const gift = async (interaction: CommandInteraction) => {
     );
   }
 
-  const hasGift = await getRepository(Gift)
+  const hasGift = await DataStore.getDB()
+    .getRepository(Gift)
     .createQueryBuilder('gift')
     .leftJoinAndSelect('gift.players', 'players')
     .where('gift.id = :gift_id', { gift_id: foundGift.id })

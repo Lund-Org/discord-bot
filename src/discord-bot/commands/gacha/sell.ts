@@ -1,16 +1,11 @@
-import {
-  CommandInteraction,
-  MessageActionRow,
-  MessageSelectMenu,
-  MessageSelectOptionData,
-  SelectMenuInteraction,
-} from 'discord.js';
+import { CacheType, CommandInteraction } from 'discord.js';
 import { Config } from '../../../database/entities/Config';
-import { getManager, getRepository } from 'typeorm';
 import { Player } from '../../../database/entities/Player';
 import { userNotFound } from './helper';
 import { GachaConfigEnum } from '../../enums/GachaEnum';
 import { PlayerInventory } from '../../../database/entities/PlayerInventory';
+import DataStore from '../../../common/dataStore';
+import { CardType } from '../../../database/entities/CardType';
 
 type SellConfig = { basic: number; gold: number };
 type CardRarity = 'basic' | 'gold';
@@ -24,18 +19,49 @@ async function securityChecks({
   interaction,
   player,
 }: {
-  interaction: SelectMenuInteraction;
+  interaction: CommandInteraction<CacheType>;
   player: Player;
 }): Promise<StructuredData | null> {
-  const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.SELL },
-  });
-  const priceConfig: SellConfig = configPriceJSON.value as SellConfig;
-  const cardInventoryId = parseInt(interaction.values[0], 10);
-  const quantity = parseInt(interaction.values[1], 10);
-  const cardInPlayerInventory = player.inventories.find(
-    (inventoryCard) => inventoryCard.id === cardInventoryId,
-  );
+  const configPriceJSON = await DataStore.getDB()
+    .getRepository(Config)
+    .findOne({
+      where: { name: GachaConfigEnum.SELL },
+    });
+  const cardType = interaction.options.getString('type', true);
+  const cardId = interaction.options.getNumber('id', true);
+  const quantity = interaction.options.getNumber('quantity', true);
+
+  if (quantity <= 0) {
+    await interaction.editReply(
+      'Erreur, la quantité doit être un nombre supérieur à 0',
+    );
+    return null;
+  }
+
+  const card = await DataStore.getDB()
+    .getRepository(CardType)
+    .findOne({
+      where: {
+        id: cardId,
+      },
+    });
+  if (!card) {
+    await interaction.editReply("Erreur, la carte n'existe pas");
+    return null;
+  }
+  const cardInPlayerInventory = await DataStore.getDB()
+    .getRepository(PlayerInventory)
+    .findOne({
+      relations: {
+        cardType: true,
+      },
+      where: {
+        player: { id: player.id },
+        cardType: { id: card.id },
+        type: cardType,
+      },
+    });
+  const priceConfig: SellConfig = configPriceJSON?.value as SellConfig;
 
   if (!cardInPlayerInventory) {
     await interaction.editReply('Erreur, tu ne possèdes pas la carte');
@@ -58,7 +84,7 @@ async function securityChecks({
   };
 }
 
-export const sell = async (interaction: SelectMenuInteraction) => {
+export const sell = async (interaction: CommandInteraction<CacheType>) => {
   const player = await userNotFound({
     interaction,
     relations: ['inventories', 'inventories.cardType'],
@@ -78,7 +104,7 @@ export const sell = async (interaction: SelectMenuInteraction) => {
   // To handle concurrency
   // @Todo : transaction ?
   await Promise.all([
-    getManager().query(
+    DataStore.getDB().manager.query(
       `UPDATE player_inventory SET total = total - ${data.quantity} WHERE id = ?`,
       [data.cardToSell.id],
     ),
@@ -87,52 +113,3 @@ export const sell = async (interaction: SelectMenuInteraction) => {
 
   return interaction.editReply(`Tu as gagné ${data.earningPoints} points`);
 };
-
-export async function sellMenu(interaction: CommandInteraction) {
-  const player = await userNotFound({
-    interaction,
-    relations: ['inventories', 'inventories.cardType'],
-  });
-
-  if (!player) {
-    return;
-  }
-
-  await interaction.deferReply({ ephemeral: true });
-
-  if (!player.inventories.length) {
-    return interaction.editReply('Tu ne possèdes aucune carte');
-  }
-
-  const getHigherQuantity = player.inventories.reduce((acc, inventoryItem) => {
-    return inventoryItem.total > acc ? inventoryItem.total : acc;
-  }, 1);
-  const row = new MessageActionRow().addComponents(
-    new MessageSelectMenu()
-      .setCustomId('sell')
-      .setPlaceholder('Selectionner')
-      .addOptions(
-        player.inventories.map((cardInventory): MessageSelectOptionData => {
-          return {
-            label: `#${cardInventory.cardType.id} - ${cardInventory.cardType.name} ${cardInventory.type} (qty: ${cardInventory.total})`,
-            value: String(cardInventory.id),
-          };
-        }),
-      )
-      .addOptions(
-        Array.from(Array(getHigherQuantity)).map(
-          (qty): MessageSelectOptionData => {
-            return {
-              label: String(qty + 1),
-              value: String(qty + 1),
-            };
-          },
-        ),
-      ),
-  );
-
-  return interaction.editReply({
-    content: 'Choisissez la carte que vous voulez vendre et en quelle quantité',
-    components: [row],
-  });
-}

@@ -1,7 +1,7 @@
 import { Client, Message, TextChannel } from 'discord.js';
 import { parse, UrlWithStringQuery } from 'url';
 import { extname } from 'path';
-import DataStore from './dataStore';
+import DataStore from '../../common/dataStore';
 
 export default {
   /**
@@ -10,7 +10,7 @@ export default {
    * @param msg The message to react with
    */
   ignoreSelfMessage(client: Client, msg: Message): Promise<boolean> {
-    return Promise.resolve(msg.author.id !== client.user.id);
+    return Promise.resolve(msg.author.id !== client.user?.id);
   },
   /**
    * Check if a message is an url
@@ -19,7 +19,7 @@ export default {
   isUrl(msg: Message): boolean {
     const parsedUrl: UrlWithStringQuery = parse(msg.content);
 
-    return parsedUrl.protocol && parsedUrl.protocol.includes('http');
+    return !!parsedUrl.protocol && parsedUrl.protocol.includes('http');
   },
   /**
    * Check if the message is in the meme channel
@@ -42,7 +42,7 @@ export default {
     const parsedUrl: UrlWithStringQuery = parse(url);
 
     return (
-      parsedUrl.pathname &&
+      !!parsedUrl.pathname &&
       authorizedExtension.includes(extname(parsedUrl.pathname))
     );
   },
@@ -55,9 +55,9 @@ export default {
     const parsedUrl: UrlWithStringQuery = parse(url);
 
     return (
-      parsedUrl.hostname &&
+      !!parsedUrl.hostname &&
       whitelist.reduce((accumulator, hostname) => {
-        return accumulator || parsedUrl.hostname.endsWith(hostname);
+        return accumulator || !!parsedUrl.hostname?.endsWith(hostname);
       }, false)
     );
   },

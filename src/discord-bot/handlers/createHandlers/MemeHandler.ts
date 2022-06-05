@@ -15,10 +15,11 @@ class MemeCheckerHandler extends Handler {
     ];
   }
 
-  validate(client: Client, msg: Message): Promise<boolean> {
-    return Promise.resolve(
-      super.validate(client, msg) && messageHelper.isMemeChannel(msg),
-    );
+  async validate(client: Client, msg: Message): Promise<boolean> {
+    const isValid =
+      (await super.validate(client, msg)) && messageHelper.isMemeChannel(msg);
+
+    return isValid;
   }
 
   async process(client: Client, msg: Message): Promise<boolean> {

@@ -1,3 +1,4 @@
+import DataStore from '../../common/dataStore';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,7 +6,6 @@ import {
   OneToMany,
   AfterLoad,
   ManyToMany,
-  getManager,
 } from 'typeorm';
 import { Gift } from './Gift';
 import { PlayerInventory } from './PlayerInventory';
@@ -27,19 +27,22 @@ export class Player {
   @Column()
   points: number;
 
-  @Column({ default: () => 'NOW()', nullable: false })
+  @Column({ type: 'date', default: () => 'NOW()', nullable: false })
   lastMessageDate: Date;
 
-  @Column({ default: null, nullable: true })
+  @Column({ type: 'date', default: null, nullable: true })
   lastDailyDraw: Date | null;
 
-  @Column({ default: () => 'NOW()', nullable: false })
+  @Column({ type: 'date', default: () => 'NOW()', nullable: false })
   joinDate: Date;
 
-  @OneToMany(() => PlayerInventory, (inventory) => inventory.player)
+  @OneToMany(
+    () => PlayerInventory,
+    (inventory: PlayerInventory) => inventory.player,
+  )
   inventories: PlayerInventory[];
 
-  @ManyToMany(() => Gift, (gift) => gift.players)
+  @ManyToMany(() => Gift, (gift: Gift) => gift.players)
   gifts: Gift[];
 
   @AfterLoad()
@@ -56,7 +59,7 @@ export class Player {
   }
 
   async saveNewGift(gift: Gift) {
-    await getManager().query(
+    await DataStore.getDB().manager.query(
       'INSERT INTO gifts_players(`gift`, `player`) VALUES(?, ?)',
       [gift.id, this.id],
     );
@@ -67,7 +70,7 @@ export class Player {
       return;
     }
 
-    await getManager().query(
+    await DataStore.getDB().manager.query(
       `UPDATE player
         SET points = points + ?
         WHERE id = ?`,

@@ -1,5 +1,5 @@
-import { CommandInteraction, MessageAttachment } from 'discord.js';
-import { getConnection } from 'typeorm';
+import { CacheType, CommandInteraction, MessageAttachment } from 'discord.js';
+import DataStore from '../../../common/dataStore';
 import { Player } from '../../../database/entities/Player';
 import {
   addCardsToInventory,
@@ -13,12 +13,12 @@ function hasAlreadyDrawAvailable(player: Player): boolean {
   beginningOfTheDay.setHours(0, 0, 0, 0);
 
   return player.lastDailyDraw
-    ? player.lastDailyDraw.getTime() <= beginningOfTheDay.getTime()
+    ? new Date(player.lastDailyDraw).getTime() <= beginningOfTheDay.getTime()
     : true;
 }
 
 async function setDailyDraw(date: Date, playerId: number) {
-  return getConnection()
+  return DataStore.getDB()
     .createQueryBuilder()
     .update(Player)
     .set({ lastDailyDraw: date })
@@ -26,7 +26,7 @@ async function setDailyDraw(date: Date, playerId: number) {
     .execute();
 }
 
-export const daily = async (interaction: CommandInteraction) => {
+export const daily = async (interaction: CommandInteraction<CacheType>) => {
   const player = await userNotFound({
     interaction,
     relations: ['inventories', 'inventories.cardType'],

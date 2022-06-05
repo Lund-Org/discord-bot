@@ -1,6 +1,6 @@
 import { Client, Guild, Collection, GuildBasedChannel } from 'discord.js';
 import { ChannelTypes } from 'discord.js/typings/enums';
-import DataStore from '../helpers/dataStore';
+import DataStore from '../../common/dataStore';
 
 export default function (client: Client) {
   const servers: Collection<string, Guild> = client.guilds.cache;
@@ -23,7 +23,7 @@ export default function (client: Client) {
     } else if (!hasMemeChannel) {
       console.log('Memes variables not set in the .env');
     } else {
-      DataStore.setData('MEME_CHANNEL_ID', process.env.MEME_CHANNEL_ID);
+      DataStore.setData('MEME_CHANNEL_ID', process.env.MEME_CHANNEL_ID || '');
     }
     return true;
   });

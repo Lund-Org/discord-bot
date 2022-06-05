@@ -1,6 +1,5 @@
-import { CommandInteraction, MessageAttachment } from 'discord.js';
+import { CacheType, CommandInteraction, MessageAttachment } from 'discord.js';
 import { Config } from '../../../database/entities/Config';
-import { getRepository } from 'typeorm';
 import { Player } from '../../../database/entities/Player';
 import {
   addCardsToInventory,
@@ -9,6 +8,7 @@ import {
   userNotFound,
 } from './helper';
 import { GachaConfigEnum } from '../../enums/GachaEnum';
+import DataStore from '../../../common/dataStore';
 
 type PriceConfig = { price: number };
 
@@ -16,13 +16,15 @@ async function securityChecks({
   interaction,
   player,
 }: {
-  interaction: CommandInteraction;
+  interaction: CommandInteraction<CacheType>;
   player: Player;
 }): Promise<{ cardNumberToBuy: number; totalPrice: number } | null> {
-  const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.PRICE },
-  });
-  const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig;
+  const configPriceJSON = await DataStore.getDB()
+    .getRepository(Config)
+    .findOne({
+      where: { name: GachaConfigEnum.PRICE },
+    });
+  const priceConfig: PriceConfig = configPriceJSON?.value as PriceConfig;
   const cardNumberToBuy = interaction.options.getNumber('quantity', true);
 
   if (cardNumberToBuy < 1 || cardNumberToBuy > 6) {
@@ -47,7 +49,7 @@ async function securityChecks({
   };
 }
 
-export const buy = async (interaction: CommandInteraction) => {
+export const buy = async (interaction: CommandInteraction<CacheType>) => {
   const player = await userNotFound({
     interaction,
     relations: ['inventories', 'inventories.cardType'],

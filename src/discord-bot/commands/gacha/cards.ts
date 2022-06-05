@@ -1,25 +1,32 @@
-import { Message, MessageEmbed, MessageReaction, User } from 'discord.js';
+import {
+  CacheType,
+  CommandInteraction,
+  Message,
+  MessageEmbed,
+  MessageReaction,
+  User,
+} from 'discord.js';
 import { Pagination } from '../../../database/entities/Pagination';
-import { getConnection, getRepository } from 'typeorm';
 import { userNotFound } from './helper';
 import { PlayerInventory } from '../../../database/entities/PlayerInventory';
 import { Player } from '../../../database/entities/Player';
+import DataStore from '../../../common/dataStore';
 
 async function paginateMessage({
-  msg,
+  userId,
   inventoryMessage,
 }: {
-  msg: Message;
+  userId: string;
   inventoryMessage: Message;
 }) {
-  return getConnection()
+  return DataStore.getDB()
     .createQueryBuilder()
     .insert()
     .into(Pagination)
     .values([
       {
         page: 0,
-        discordUser_id: msg.author.id,
+        discordUser_id: userId,
         discordMessage_id: inventoryMessage.id,
       },
     ])
@@ -40,9 +47,9 @@ function buildSnippet(username: string, cardInventories: PlayerInventory[]) {
   return snippet;
 }
 
-export const cards = async ({ msg }: { msg: Message }) => {
+export const cards = async (interaction: CommandInteraction<CacheType>) => {
   const player = await userNotFound({
-    msg,
+    interaction,
     relations: ['inventories', 'inventories.cardType'],
   });
 
@@ -50,21 +57,24 @@ export const cards = async ({ msg }: { msg: Message }) => {
     return;
   }
 
+  await interaction.deferReply();
   const tenFirstCards = player.inventories.slice(0, 10);
 
   if (!tenFirstCards.length) {
-    msg.channel.send("Aucune carte n'est présente dans l'inventaire");
-    return;
+    return interaction.editReply(
+      "Aucune carte n'est présente dans l'inventaire",
+    );
   }
 
-  const snippet = buildSnippet(msg.author.username, tenFirstCards);
-  const inventoryMessage = await msg.channel.send({ embeds: [snippet] });
+  const snippet = buildSnippet(interaction.user.username, tenFirstCards);
+  await interaction.editReply({ embeds: [snippet] });
+  const inventoryMessage = (await interaction.fetchReply()) as Message;
 
   if (player.inventories.length > 10) {
     await inventoryMessage.react('◀');
     await inventoryMessage.react('▶');
 
-    await paginateMessage({ msg, inventoryMessage });
+    await paginateMessage({ userId: interaction.user.id, inventoryMessage });
   }
 };
 
@@ -73,10 +83,17 @@ export const updateMessage = async (
   reaction: MessageReaction,
   user: User,
 ) => {
-  const player = await getRepository(Player).findOne({
-    where: { discord_id: user.id },
-    relations: ['inventories', 'inventories.cardType'],
-  });
+  const player = await DataStore.getDB()
+    .getRepository(Player)
+    .findOne({
+      where: { discord_id: user.id },
+      relations: ['inventories', 'inventories.cardType'],
+    });
+
+  if (!player) {
+    return;
+  }
+
   const paginateTenCards = player.inventories.slice(
     pagination.page * 10,
     pagination.page * 10 + 10,
@@ -84,7 +101,7 @@ export const updateMessage = async (
   const snippet = buildSnippet(user.username, paginateTenCards);
 
   await reaction.message.edit({ embeds: [snippet] });
-  await getConnection()
+  await DataStore.getDB()
     .createQueryBuilder()
     .update(Pagination)
     .set({

@@ -1,29 +1,31 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction, MessageEmbed } from 'discord.js';
+import { CacheType, CommandInteraction, MessageEmbed } from 'discord.js';
 import { HowLongToBeatService } from 'howlongtobeat';
 
-type HLTBLabelCode =
-  | 'gameplayMain'
-  | 'gameplayMainExtra'
-  | 'gameplayCompletionist';
+type HLTBCode = 'gameplayMain' | 'gameplayMainExtra' | 'gameplayCompletionist';
+const HLTBLabelCode: [HLTBCode, string][] = [
+  ['gameplayMain', 'Main Story'],
+  ['gameplayMainExtra', 'Main + Extras'],
+  ['gameplayCompletionist', 'Completionist'],
+];
 const CMD_NAME = 'howlongtobeat' as const;
 
-export function howlongtobeatCmd() {
-  return new SlashCommandBuilder()
-    .setName(CMD_NAME)
-    .setDescription('Récupère les informations de durée de vie pour un jeu')
-    .addStringOption((option) =>
-      option.setName('name').setDescription('Le nom du jeu').setRequired(true),
-    )
-    .toJSON();
-}
+export const howlongtobeatCmd = new SlashCommandBuilder()
+  .setName(CMD_NAME)
+  .setDescription('Récupère les informations de durée de vie pour un jeu')
+  .addStringOption((option) =>
+    option.setName('name').setDescription('Le nom du jeu').setRequired(true),
+  )
+  .toJSON();
 
 export const howlongtobeatResponse = {
   type: CMD_NAME,
   callback: howlongtobeatCallback,
 };
 
-async function howlongtobeatCallback(interaction: CommandInteraction) {
+async function howlongtobeatCallback(
+  interaction: CommandInteraction<CacheType>,
+) {
   const hltbService = new HowLongToBeatService();
   const name = interaction.options.getString('name', true);
 
@@ -37,12 +39,14 @@ async function howlongtobeatCallback(interaction: CommandInteraction) {
         const embed = new MessageEmbed()
           .setColor('#0ee8da')
           .setTitle(details.name)
-          .setThumbnail(details.imageUrl);
+          .setThumbnail(`https://howlongtobeat.com${details.imageUrl}`);
 
-        details.timeLabels.forEach(([code, label]) => {
-          const value = details[code as HLTBLabelCode];
+        HLTBLabelCode.forEach(([code, label]) => {
+          const value = details[code as HLTBCode];
 
-          embed.addField(label, `${value}h`, true);
+          if (value) {
+            embed.addField(label, `${value}h`, true);
+          }
         });
 
         await interaction.reply({ embeds: [embed] });

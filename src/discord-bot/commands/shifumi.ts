@@ -1,5 +1,5 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { CacheType, CommandInteraction } from 'discord.js';
 import ShifumiEnum from '../enums/ShifumiEnum';
 
 const availableValues = [
@@ -9,30 +9,28 @@ const availableValues = [
 ] as const;
 const CMD_NAME = 'shifumi' as const;
 
-export function shifumiCmd() {
-  return new SlashCommandBuilder()
-    .setName(CMD_NAME)
-    .setDescription('Joue à Shifumi avec le bot')
-    .addStringOption((option) =>
-      option
-        .setName('action')
-        .setDescription("L'action jouée")
-        .setRequired(true)
-        .addChoices(
-          { name: 'Pierre', value: ShifumiEnum.PIERRE },
-          { name: 'Feuille', value: ShifumiEnum.FEUILLE },
-          { name: 'Ciseaux', value: ShifumiEnum.CISEAUX },
-        ),
-    )
-    .toJSON();
-}
+export const shifumiCmd = new SlashCommandBuilder()
+  .setName(CMD_NAME)
+  .setDescription('Joue à Shifumi avec le bot')
+  .addStringOption((option) =>
+    option
+      .setName('action')
+      .setDescription("L'action jouée")
+      .setRequired(true)
+      .addChoices(
+        { name: 'Pierre', value: ShifumiEnum.PIERRE },
+        { name: 'Feuille', value: ShifumiEnum.FEUILLE },
+        { name: 'Ciseaux', value: ShifumiEnum.CISEAUX },
+      ),
+  )
+  .toJSON();
 
 export const shifumiResponse = {
   type: CMD_NAME,
   callback: shifumiCallback,
 };
 
-function shifumiCallback(interaction: CommandInteraction) {
+function shifumiCallback(interaction: CommandInteraction<CacheType>) {
   const botChoice: ShifumiEnum = pickRandomChoice();
   const userInput = interaction.options.getString('action', true);
 

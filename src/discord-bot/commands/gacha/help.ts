@@ -1,15 +1,17 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { CacheType, CommandInteraction, MessageEmbed } from 'discord.js';
+import DataStore from '../../../common/dataStore';
 import { Config } from '../../../database/entities/Config';
-import { getRepository } from 'typeorm';
 import { GachaConfigEnum } from '../../enums/GachaEnum';
 
 type PriceConfig = { price: number };
 
-export const help = async ({ msg }: { msg: Message }) => {
-  const configPriceJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.PRICE },
-  });
-  const priceConfig: PriceConfig = configPriceJSON.value as PriceConfig;
+export const help = async (interaction: CommandInteraction<CacheType>) => {
+  const configPriceJSON = await DataStore.getDB()
+    .getRepository(Config)
+    .findOne({
+      where: { name: GachaConfigEnum.PRICE },
+    });
+  const priceConfig: PriceConfig = configPriceJSON?.value as PriceConfig;
   const snippet: MessageEmbed = new MessageEmbed({
     title: 'Liste des commandes disponibles :',
   });
@@ -52,5 +54,5 @@ export const help = async ({ msg }: { msg: Message }) => {
     'Permet de lier son compte Twitch à son profil Gacha',
   );
   snippet.addField(`/gacha gift`, 'Permet de gagner un cadeau');
-  msg.channel.send({ embeds: [snippet] });
+  return interaction.reply({ embeds: [snippet] });
 };

@@ -1,9 +1,12 @@
+import { DataSource } from 'typeorm';
+
 interface DataObject {
   [key: string]: string;
 }
 
 class DataStore {
   static datas: DataObject = {};
+  static db: DataSource;
 
   /**
    * Set the data in the dataStore
@@ -20,6 +23,14 @@ class DataStore {
    */
   static getData(key: string) {
     return DataStore.datas[key];
+  }
+
+  static setDB(db: DataSource) {
+    DataStore.db = db;
+  }
+
+  static getDB() {
+    return DataStore.db;
   }
 }
 

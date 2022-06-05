@@ -1,12 +1,12 @@
-import { Message } from 'discord.js';
+import { CacheType, CommandInteraction } from 'discord.js';
 import { userNotFound } from './helper';
 
-export const points = async ({ msg }: { msg: Message }) => {
-  const player = await userNotFound({ msg });
+export const points = async (interaction: CommandInteraction<CacheType>) => {
+  const player = await userNotFound({ interaction });
 
   if (!player) {
     return;
   }
 
-  msg.channel.send(`Tu possèdes actuellement ${player.points} points`);
+  interaction.reply(`Tu possèdes actuellement ${player.points} points`);
 };

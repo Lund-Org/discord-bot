@@ -69,7 +69,8 @@ Find your bot token in the bot menu
 To make your bot join your server, go in the OAuth menu
 Check "Bot"
 In the url provided, replace `permissions=0` to `permissions=122406693968`
-Your url should look like `https://discord.com/api/oauth2/authorize?client_id=<your client id>&permissions=122406693968&scope=bot`
+Your url should look like `https://discord.com/api/oauth2/authorize?client_id=<your client id>&permissions=122406693968&scope=bot%20applications.commands`
+⚠ Be careful to have the `applications.commands` in the scope
 Copy the url and use it to add the bot to your server
 
 #### Environment variables

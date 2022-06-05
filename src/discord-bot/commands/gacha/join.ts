@@ -1,14 +1,16 @@
-import { CommandInteraction, MessageAttachment } from 'discord.js';
+import { CacheType, CommandInteraction, MessageAttachment } from 'discord.js';
 import { Birthday } from '../../../database/entities/Birthday';
-import { getManager, getRepository } from 'typeorm';
 import { Player } from '../../../database/entities/Player';
 import { addCardsToInventory, drawCards, generateDrawImage } from './helper';
 import { givenPointsForBirthday } from '../../../common/birthday';
+import DataStore from '../../../common/dataStore';
 
 async function hasBirthdayAndBeforeDate(discordId: string) {
-  const birthday = await getRepository(Birthday).findOne({
-    where: { discord_id: discordId },
-  });
+  const birthday = await DataStore.getDB()
+    .getRepository(Birthday)
+    .findOne({
+      where: { discord_id: discordId },
+    });
 
   if (!birthday) {
     return false;
@@ -23,9 +25,9 @@ async function hasBirthdayAndBeforeDate(discordId: string) {
   return birthdayThisYear.getTime() < Date.now();
 }
 
-export const join = async (interaction: CommandInteraction) => {
+export const join = async (interaction: CommandInteraction<CacheType>) => {
   const userId = interaction.user.id;
-  const playerRepository = await getRepository(Player);
+  const playerRepository = await DataStore.getDB().getRepository(Player);
   let player = await playerRepository.findOne({
     where: { discord_id: userId },
   });
@@ -36,7 +38,6 @@ export const join = async (interaction: CommandInteraction) => {
 
   await interaction.deferReply();
   try {
-    const entityManager = getManager();
     const birthdayBonus = await hasBirthdayAndBeforeDate(userId);
 
     player = new Player();
@@ -47,7 +48,7 @@ export const join = async (interaction: CommandInteraction) => {
     player.lastDailyDraw = null;
     player.joinDate = new Date();
     player.inventories = [];
-    await entityManager.save(player);
+    await DataStore.getDB().manager.save(player);
 
     const cards = await drawCards(8);
     const canvas = await generateDrawImage(interaction.user.username, cards);

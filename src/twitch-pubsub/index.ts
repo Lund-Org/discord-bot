@@ -34,7 +34,7 @@
 //   }
 
 //   async function getConfig() {
-//     return getRepository(Config).findOne({ name: 'TWITCH_TOKENS' })
+//     return DataStore.getDB(Config).findOne({ name: 'TWITCH_TOKENS' })
 //   }
 
 //   async function getAuthProvider(config: Config|null) {
@@ -68,8 +68,8 @@
 //       console.log(userId, message);
 
 //       return Promise.all([
-//         getRepository(Player).findOne({ twitch_username: message.userName.toLowerCase() }),
-//         getRepository(Config).findOne({ name: 'TWITCH_REWARD' })
+//         DataStore.getDB(Player).findOne({ twitch_username: message.userName.toLowerCase() }),
+//         DataStore.getDB(Config).findOne({ name: 'TWITCH_REWARD' })
 //       ]).then(async ([player, twitchReward]) => {
 //         if (!player || !twitchReward) {
 //           return

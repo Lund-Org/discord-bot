@@ -24,7 +24,7 @@ export class Gift {
   @Column({ type: 'json', nullable: false })
   bonus: Record<string, number>[];
 
-  @ManyToMany(() => Player, (player) => player.gifts)
+  @ManyToMany(() => Player, (player: Player) => player.gifts)
   @JoinTable({
     name: 'gifts_players',
     joinColumn: {

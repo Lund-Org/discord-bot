@@ -1,9 +1,9 @@
-import { CommandInteraction } from 'discord.js';
-import { getRepository } from 'typeorm';
+import { CacheType, CommandInteraction } from 'discord.js';
+import DataStore from '../../../common/dataStore';
 import { Player } from '../../../database/entities/Player';
 import { userNotFound } from './helper';
 
-export const twitch = async (interaction: CommandInteraction) => {
+export const twitch = async (interaction: CommandInteraction<CacheType>) => {
   const player = await userNotFound({ interaction });
 
   if (!player) {
@@ -15,7 +15,7 @@ export const twitch = async (interaction: CommandInteraction) => {
   player.twitch_username = twitchUsername.toLowerCase();
 
   try {
-    await getRepository(Player).save(player);
+    await DataStore.getDB().getRepository(Player).save(player);
     interaction.reply(`Pseudo twitch attaché`);
   } catch (e) {
     interaction.reply(

@@ -1,6 +1,9 @@
-import { CommandInteraction, SelectMenuInteraction } from 'discord.js';
+import {
+  CacheType,
+  CommandInteraction,
+  SelectMenuInteraction,
+} from 'discord.js';
 import { GachaConfigEnum } from '../../enums/GachaEnum';
-import { getManager, getRepository } from 'typeorm';
 import { Player } from '../../../database/entities/Player';
 import { PlayerInventory } from '../../../database/entities/PlayerInventory';
 import { Config } from '../../../database/entities/Config';
@@ -18,6 +21,7 @@ import {
 } from '../../helpers/CanvasData';
 import { createCanvas } from 'canvas';
 import { setupCardDrawBody, setupCardDrawHeader } from '../../helpers/canvas';
+import DataStore from '../../../common/dataStore';
 
 type ChancesConfig = {
   '1': number;
@@ -31,15 +35,17 @@ export const userNotFound = async ({
   withWarning = true,
   relations = [],
 }: {
-  interaction: CommandInteraction | SelectMenuInteraction;
+  interaction: CommandInteraction<CacheType> | SelectMenuInteraction<CacheType>;
   withWarning?: boolean;
   relations?: string[];
 }) => {
   const userId = interaction.user.id;
-  const player = await getRepository(Player).findOne({
-    where: { discord_id: userId },
-    relations,
-  });
+  const player = await DataStore.getDB()
+    .getRepository(Player)
+    .findOne({
+      where: { discord_id: userId },
+      relations,
+    });
 
   if (player) {
     return player;
@@ -58,7 +64,6 @@ export async function addCardsToInventory(
   cardsToAdd: CardDraw[],
   totalPrice: number,
 ) {
-  const entityManager = getManager();
   const inventoriesItem: PlayerInventory[] = [];
 
   cardsToAdd.forEach((cardToAdd) => {
@@ -86,15 +91,17 @@ export async function addCardsToInventory(
   });
   await Promise.all([
     player.addPoints(-totalPrice),
-    entityManager.save(inventoriesItem),
+    DataStore.getDB().manager.save(inventoriesItem),
   ]);
 }
 
 export const drawCards = async (nbCardToDraw: number): Promise<CardDraw[]> => {
-  const chancesJSON = await getRepository(Config).findOne({
-    where: { name: GachaConfigEnum.DROP_CHANCES },
-  });
-  const chancesConfig: ChancesConfig = chancesJSON.value as ChancesConfig;
+  const chancesJSON = await DataStore.getDB()
+    .getRepository(Config)
+    .findOne({
+      where: { name: GachaConfigEnum.DROP_CHANCES },
+    });
+  const chancesConfig: ChancesConfig = chancesJSON?.value as ChancesConfig;
   const cardsDraw: CardDraw[] = [];
 
   for (let i = 0; i < nbCardToDraw; ++i) {
@@ -114,14 +121,15 @@ export const drawCards = async (nbCardToDraw: number): Promise<CardDraw[]> => {
 
     const level = parseInt(loopValues.foundLevel, 10);
     const isGold = Math.floor(Math.random() * 100) < 4;
-    const randomCard = await getManager()
-      .createQueryBuilder(CardType, 'cardType')
+    const randomCard = await DataStore.getDB()
+      .manager.createQueryBuilder(CardType, 'cardType')
       .where('cardType.level = :level', { level })
       .andWhere('cardType.isFusion = :fusion', { fusion: false })
       .orderBy('RAND()')
       .getOne();
 
-    cardsDraw.push({ cardType: randomCard, isGold });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    cardsDraw.push({ cardType: randomCard!, isGold });
   }
 
   return cardsDraw;

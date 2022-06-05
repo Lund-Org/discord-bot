@@ -1,21 +1,19 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { CacheType, CommandInteraction } from 'discord.js';
 
 const CMD_NAME = 'pong' as const;
 
-export function pongCmd() {
-  return new SlashCommandBuilder()
-    .setName(CMD_NAME)
-    .setDescription('Joue au ping pong')
-    .toJSON();
-}
+export const pongCmd = new SlashCommandBuilder()
+  .setName(CMD_NAME)
+  .setDescription('Joue au ping pong')
+  .toJSON();
 
 export const pongResponse = {
   type: CMD_NAME,
   callback: pongCallback,
 };
 
-function pongCallback(interaction: CommandInteraction) {
+function pongCallback(interaction: CommandInteraction<CacheType>) {
   const botMissChances = Math.round(Math.random() * 100);
   const missChances = Math.round(Math.random() * 100);
 

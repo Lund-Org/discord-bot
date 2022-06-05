@@ -13,9 +13,9 @@ export class PlayerInventory {
   @Column()
   type: string;
 
-  @ManyToOne(() => Player, (player) => player.inventories)
+  @ManyToOne(() => Player, (player: Player) => player.inventories)
   player: Player;
 
-  @ManyToOne(() => CardType, (cardType) => cardType.playerInventories)
+  @ManyToOne(() => CardType, (cardType: CardType) => cardType.playerInventories)
   cardType: CardType;
 }

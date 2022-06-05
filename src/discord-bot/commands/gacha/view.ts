@@ -1,16 +1,18 @@
-import { CommandInteraction, MessageAttachment } from 'discord.js';
-import { getRepository } from 'typeorm';
+import { CacheType, CommandInteraction, MessageAttachment } from 'discord.js';
+import DataStore from '../../../common/dataStore';
 import { CardType } from '../../../database/entities/CardType';
 import { generateDrawImage } from './helper';
 
-export const view = async (interaction: CommandInteraction) => {
+export const view = async (interaction: CommandInteraction<CacheType>) => {
   const cardToCreateId = interaction.options.getNumber('id', true);
 
   await interaction.deferReply();
-  const cardToCreate = await getRepository(CardType).findOne({
-    where: { id: cardToCreateId },
-    relations: ['fusionDependencies'],
-  });
+  const cardToCreate = await DataStore.getDB()
+    .getRepository(CardType)
+    .findOne({
+      where: { id: cardToCreateId },
+      relations: ['fusionDependencies'],
+    });
   if (cardToCreate) {
     const canvas = await generateDrawImage(interaction.user.username, [
       { cardType: cardToCreate, isGold: false },
