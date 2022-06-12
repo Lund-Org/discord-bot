@@ -10,7 +10,8 @@ class GachaHandler extends Handler {
 
   async process(client: Client, msg: Message): Promise<boolean> {
     await addPoints({ msg });
-    return true;
+    // important to keep false so the other handler will be process too
+    return false;
   }
 }
 

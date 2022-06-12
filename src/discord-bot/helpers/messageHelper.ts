@@ -19,7 +19,11 @@ export default {
   isUrl(msg: Message): boolean {
     const parsedUrl: UrlWithStringQuery = parse(msg.content);
 
-    return !!parsedUrl.protocol && parsedUrl.protocol.includes('http');
+    return (
+      !!parsedUrl.protocol &&
+      (parsedUrl.protocol.includes('http') ||
+        parsedUrl.protocol.includes('https'))
+    );
   },
   /**
    * Check if the message is in the meme channel
