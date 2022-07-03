@@ -23,9 +23,6 @@ export const addPoints = async ({ msg }: { msg: Message }): Promise<void> => {
     });
 
   if (!player) {
-    msg.reply(
-      `Avant de pouvoir jouer, crée un compte avec la commande "/gacha join"`,
-    );
     return;
   }
 
