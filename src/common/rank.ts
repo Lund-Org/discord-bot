@@ -13,9 +13,10 @@ type XpByUser = {
   lastDailyDraw: Date | null;
   joinDate: Date;
 };
+type EnrichXpByUser = XpByUser & { position: number };
 type RankByUser = {
   level: { currentLevel: number; xpNextLevel: number };
-} & XpByUser;
+} & EnrichXpByUser;
 
 const basicXP = 100;
 const goldXP = 500;
@@ -37,17 +38,20 @@ export async function getGlobalRanking(
         card_type.level
       FROM player_inventory
       LEFT JOIN card_type ON card_type.id = player_inventory.cardTypeId
-      ${
-        userToFilter.length
-          ? `WHERE player_inventory.playerId IN (${userToFilter.join(', ')})`
-          : ''
-      }
       GROUP BY playerId, cardTypeId, type
     ) as t1
     LEFT JOIN player on player.id = t1.playerId
     GROUP BY playerId
     ORDER BY currentXP DESC
   `)) as XpByUser[];
+  const enrichAndFilteredXpByUsers: EnrichXpByUser[] = xpByUsers
+    .map((xpByUser, index) => ({
+      ...xpByUser,
+      position: index + 1,
+    }))
+    .filter((xpByUser) => {
+      return userToFilter.length ? userToFilter.includes(xpByUser.id) : true;
+    });
   const configLevelsJSON = await DataStore.getDB()
     .getRepository(Config)
     .findOne({
@@ -58,7 +62,7 @@ export async function getGlobalRanking(
     number
   >;
 
-  return xpByUsers.map((xpByUser: XpByUser) => {
+  return enrichAndFilteredXpByUsers.map((xpByUser: EnrichXpByUser) => {
     const level = Object.values(levelConfig).reduce(
       (acc, val: number, index: number) => {
         if (val <= xpByUser.currentXP) {

@@ -15,6 +15,14 @@ export const profile = async (interaction: CommandInteraction) => {
   const [rank] = await getGlobalRanking([player.id]);
 
   return interaction.reply(
-    `Tu es niveau ${rank.level.currentLevel} avec ${rank.currentXP}xp. Le prochain niveau est obtenable avec ${rank.level.xpNextLevel}xp. Tu peux retrouver plus d'informations ici : https://lundprod.com/profile/${interaction.user.id}`,
+    `Tu es niveau ${rank.level.currentLevel} avec ${rank.currentXP}xp (tu es ${
+      rank.position
+    }${
+      rank.position === 1 ? 'er' : 'eme'
+    }). Le prochain niveau est obtenable avec ${
+      rank.level.xpNextLevel
+    }xp. Tu peux retrouver plus d'informations ici : https://lundprod.com/profile/${
+      interaction.user.id
+    }`,
   );
 };
